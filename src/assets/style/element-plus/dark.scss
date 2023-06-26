@@ -13,4 +13,4 @@ $--colors: ('primary': ('base': hsl(127, 28%, 47%),
 );
 @forward "element-plus/theme-chalk/src/dark/var.scss" with (
     $colors: $--colors
-)
+);

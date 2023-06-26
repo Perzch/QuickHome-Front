@@ -1,3 +1,4 @@
+//暗色主题适配
 @use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
 @use 'animate.css';
 @use './tailwind.scss';
@@ -12,9 +13,40 @@
 }
 :root,html,body,div,span,p,i,img,section,main,header,footer,form,input,button,select,a,nav,article,aside,h1,h2,h3,h4,h5,h6 {
   @apply duration-200 ease-in-out transition-all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-property: all;
+  transition-duration: 150ms;
 }
 :root {
-  font-family: '宋体','XiHei','Oblique','微软雅黑', sans-serif;
-  @apply text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl;
+  font-family: 'XiHei','宋体','Oblique','微软雅黑', sans-serif;
+  @media (width < 640px) {
+    font-size: calc(12px + .1vw);
+  }
+  @media (width >= 640px) {
+    font-size: calc(14px + .1vw);
+  }
+  @media (width >= 768px) {
+      font-size: calc(16px + .1vw);
+  }
+  @media (width >= 1024px) {
+      font-size: calc(18px + .1vw);
+  }
+  @media (width >= 1280px) {
+      font-size: calc(20px + .1vw);
+  }
+}
+@keyframes -right-leave-left-enter {
+  0%,100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  51% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
 }
 $color1: rgb(18, 18, 18)

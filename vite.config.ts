@@ -12,7 +12,7 @@ export default defineConfig({
     port: 7734,
     proxy: {
       "/api": {
-        target: "http://localhost:4523/m1/2510347-0-default",
+        target: "https://mock.apifox.cn/m1/2874308-0-default",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },

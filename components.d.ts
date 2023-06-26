@@ -7,13 +7,19 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    BaseTitle: typeof import('./src/components/base/BaseTitle.vue')['default']
+    CityItem: typeof import('./src/components/base/CityItem.vue')['default']
+    ContextMenu: typeof import('./src/components/base/ContextMenu.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElIcon: typeof import('element-plus/es')['ElIcon']
     ElLink: typeof import('element-plus/es')['ElLink']
     HeaderNav: typeof import('./src/components/HeaderNav.vue')['default']
+    Loading: typeof import('./src/components/base/Loading.vue')['default']
+    MyButton: typeof import('./src/components/base/MyButton.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ThemeChange: typeof import('./src/components/ThemeChange.vue')['default']
+    Title: typeof import('./src/components/base/Title.vue')['default']
   }
 }

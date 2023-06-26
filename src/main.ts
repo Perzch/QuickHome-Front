@@ -6,8 +6,8 @@ import { createPinia } from 'pinia'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 //@ts-ignore
 import { MotionPlugin } from '@vueuse/motion'
-//@ts-ignore
-import { VuePrlxDirective } from 'vue-prlx'
+// @ts-ignore
+import VuePrlx from 'vue-prlx'
 
 // @ts-ignore
 import App from "@/App.vue";
@@ -19,8 +19,9 @@ const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
-
-app.directive('prlx', VuePrlxDirective);
+// @ts-ignore
+app.component('baseTitle', () => import('@/components/base/Title.vue'))
+app.use(VuePrlx)
 app.use(createPinia())
 app.use(MotionPlugin)
 app.use(router)
