@@ -1,13 +1,11 @@
 import './assets/style/index.scss'
-
 import './utils/scroll-timeline.js'
+import 'https://at.alicdn.com/t/c/font_4139643_3poesq0yetf.js'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 //@ts-ignore
 import { MotionPlugin } from '@vueuse/motion'
-// @ts-ignore
-import VuePrlx from 'vue-prlx'
 
 // @ts-ignore
 import App from "@/App.vue";
@@ -21,7 +19,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 // @ts-ignore
 app.component('baseTitle', () => import('@/components/base/Title.vue'))
-app.use(VuePrlx)
 app.use(createPinia())
 app.use(MotionPlugin)
 app.use(router)

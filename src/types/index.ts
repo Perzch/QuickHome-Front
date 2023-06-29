@@ -4,6 +4,13 @@ export interface ResponseData<T> {
     data: T;
 }
 
+export interface User {
+    userPhone: string;
+    userPwd: string;
+    captcha?: string;
+    repeatPassword?: string;
+}
+
 /**
  * HotRoomType
  */
@@ -55,11 +62,11 @@ export interface HomeImage {
  * HomeInformation
  */
 export interface HomeInformation {
-    homeArea_zch_hwz_gjc?: number;
-    homeDeposit_zch_hwz_gjc?: number;
-    homeId_zch_hwz_gjc?: number;
-    homeInDate_zch_hwz_gjc?: Date;
-    homeInfId_zch_hwz_gjc: number;
-    homeStructure_zch_hwz_gjc?: string;
-    maxPerson_zch_hwz_gjc?: number;
+    homeArea_zch_hwz_gjc?: number; //房屋面积
+    homeDeposit_zch_hwz_gjc?: number; //房屋押金
+    homeId_zch_hwz_gjc?: number; //房屋id
+    homeInDate_zch_hwz_gjc?: Date; //入住时间
+    homeInfId_zch_hwz_gjc: number; //房屋详细信息id
+    homeStructure_zch_hwz_gjc?: string; //房屋结构
+    maxPerson_zch_hwz_gjc?: number;//最大入住人数
 }

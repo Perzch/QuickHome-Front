@@ -2,6 +2,7 @@
 @use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
 @use 'animate.css';
 @use './tailwind.scss';
+//@use './iconfont/iconfont.css';
 // @import '@fortawesome/fontawesome-free/css/all.css';
 @font-face {
   font-family: 'Oblique';
@@ -10,6 +11,13 @@
 @font-face {
   font-family: 'XiHei';
   src: url('../font/LXGWNeoXiHei.ttf');
+}
+.icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
 }
 :root,html,body,div,span,p,i,img,section,main,header,footer,form,input,button,select,a,nav,article,aside,h1,h2,h3,h4,h5,h6 {
   @apply duration-200 ease-in-out transition-all;

@@ -14,7 +14,10 @@ export default defineConfig({
       "/api": {
         target: "https://mock.apifox.cn/m1/2874308-0-default",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
+        rewrite: (path) => {
+          console.log(path)
+          return path.replace(/^\/api/, "")
+        },
       },
     },
   },
