@@ -26,7 +26,7 @@ const showDraw = () => {
         <div class="header-tracker" ref="headerTracker"></div>
         <header class="header" ref="header">
             <div class="h-full">
-                <RouterLink to="/" class="header-logo"><img src="../assets/logo.svg" alt="QuickHome"/></RouterLink>
+                <RouterLink to="/" class="header-logo"><img src="../assets/logo/text.png" alt="QuickHome"/></RouterLink>
             </div>
             <ul class="router-list">
                 <li><router-link to="/">客房和套房</router-link></li>
@@ -92,9 +92,9 @@ const showDraw = () => {
             }
         }
         .header-logo {
-            @apply h-full block;
+            @apply h-full flex items-center;
             img {
-                @apply h-full;
+                @apply h-2/3 object-contain;
             }
         }
     }

@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AttractionSwiper: typeof import('./src/components/AttractionSwiper.vue')['default']
     BaseTitle: typeof import('./src/components/base/BaseTitle.vue')['default']
     CityItem: typeof import('./src/components/base/CityItem.vue')['default']
     ContextMenu: typeof import('./src/components/base/ContextMenu.vue')['default']

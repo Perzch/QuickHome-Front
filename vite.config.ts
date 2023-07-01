@@ -12,7 +12,8 @@ export default defineConfig({
     port: 7734,
     proxy: {
       "/api": {
-        target: "https://mock.apifox.cn/m1/2874308-0-default",
+        // target: "https://mock.apifox.cn/m1/2874308-0-default",
+        target: "http://47.98.191.69:7735",
         changeOrigin: true,
         rewrite: (path) => {
           console.log(path)

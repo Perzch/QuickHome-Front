@@ -70,3 +70,42 @@ export interface HomeInformation {
     homeStructure_zch_hwz_gjc?: string; //房屋结构
     maxPerson_zch_hwz_gjc?: number;//最大入住人数
 }
+export interface HotAttraction {
+    attractionImageList: AttractionImage[];
+    attractions: Attractions;
+    attractionsId_zch_hwz_gjc: number;
+    collectionCount: number;
+}
+/**
+ * AttractionImage
+ */
+export interface AttractionImage {
+    /**
+     * 景点编号
+     */
+    attractionId_zch_hwz_gjc?: number;
+    /**
+     * 图片编号
+     */
+    imageId_zch_hwz_gjc: number;
+    /**
+     * 图片路径
+     */
+    imagePath_zch_hwz_gjc?: string;
+    /**
+     * 上传时间
+     */
+    inDateTime_zch_hwz_gjc?: Date;
+}
+
+/**
+ * Attractions
+ */
+export interface Attractions {
+    attractionInDate_zch_hwz_gjc?: Date;//景点记录时间
+    attractionInformation_zch_hwz_gjc?: string;//景点信息
+    attractionsId_zch_hwz_gjc?: number;//景点编号
+    attractionsName_zch_hwz_gjc?: string;//景点名称
+    closingTime_zch_hwz_gjc?: Date; // 景点关闭时间
+    openingTime_zch_hwz_gjc?: Date; // 景点开放时间
+}

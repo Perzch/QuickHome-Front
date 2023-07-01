@@ -94,7 +94,7 @@ const login = async () => {
 <template>
     <div class="warp">
             <div class="box">
-                <img src="../assets/logo.svg" class="h-24" alt="QuickHome">
+                <router-link to="/"><img src="../assets/logo/logo-text.png" class="h-24 object-contain" alt="QuickHome"></router-link>
                 <p class="title">{{type === '1'?'登录':'注册'}}</p>
                 <p class="change-type-text">{{type === '1'?'新用户?':'已有账户?'}}<el-text @click="changeType">{{type === '1'?'注册':'登录'}}</el-text></p>
                 <el-form class="form-box" label-width="auto" label-position="top" size="large" :rules="rules" :model="user" hide-required-asterisk @validate="formValidate" ref="form">

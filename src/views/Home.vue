@@ -1,12 +1,13 @@
 <script lang='ts' setup>
 import HeaderNav from '@/components/HeaderNav.vue'
-import {onMounted, ref} from 'vue';
-import type {HotRoomType} from '@/types'
-import {getHotRoomType} from "@/request";
+import {markRaw, reactive, ref} from 'vue';
+import type {HotAttraction, HotRoomType} from '@/types'
+import {getHotAttraction, getHotRoomType} from "@/request";
 import HotRoom from "@/components/HotRoom.vue";
-import {useTitle} from "@vueuse/core";
+import {useElementSize, useTitle} from "@vueuse/core";
 import SearchBar from "@/components/SearchBar.vue";
-const hotRoomType = ref(<HotRoomType[]>[
+import AttractionSwiper from "@/components/AttractionSwiper.vue";
+const hotRoomTypeList = ref(<HotRoomType[]>[
     {
         "homeId_zch_hwz_gjc": 510000198906072500,
         "home": {
@@ -112,11 +113,61 @@ const hotRoomType = ref(<HotRoomType[]>[
         "collectionCount": 5727382511125006
     }
 ])
+const attraction = ref(<HotAttraction>{
+    "attractionsId_zch_hwz_gjc": 3,
+    "attractionImageList": [
+        {
+            "imageId_zch_hwz_gjc": 1,
+            "attractionId_zch_hwz_gjc": 3,
+            "imagePath_zch_hwz_gjc": "https://picsum.photos/1280/1080?q=7",
+            "inDateTime_zch_hwz_gjc": "2023-06-24T12:07:25.000+00:00",
+            "standby1_zch_hwz_gjc": null,
+            "standby2_zch_hwz_gjc": null,
+            "standby3_zch_hwz_gjc": null,
+            "deleted_zch_hwz_gjc": 0
+        },
+        {
+            "imageId_zch_hwz_gjc": 1,
+            "attractionId_zch_hwz_gjc": 3,
+            "imagePath_zch_hwz_gjc": "https://picsum.photos/1280/1080?q=8",
+            "inDateTime_zch_hwz_gjc": "2023-06-24T12:07:25.000+00:00",
+            "standby1_zch_hwz_gjc": null,
+            "standby2_zch_hwz_gjc": null,
+            "standby3_zch_hwz_gjc": null,
+            "deleted_zch_hwz_gjc": 0
+        },
+        {
+            "imageId_zch_hwz_gjc": 1,
+            "attractionId_zch_hwz_gjc": 3,
+            "imagePath_zch_hwz_gjc": "https://picsum.photos/1280/1080?q=9",
+            "inDateTime_zch_hwz_gjc": "2023-06-24T12:07:25.000+00:00",
+            "standby1_zch_hwz_gjc": null,
+            "standby2_zch_hwz_gjc": null,
+            "standby3_zch_hwz_gjc": null,
+            "deleted_zch_hwz_gjc": 0
+        }
+    ],
+    "attractions": {
+        "attractionsId_zch_hwz_gjc": 3,
+        "attractionsName_zch_hwz_gjc": "橘子洲头",
+        "attractionInformation_zch_hwz_gjc": "333",
+        "openingTime_zch_hwz_gjc": "2023-06-08T10:40:16.000+00:00",
+        "closingTime_zch_hwz_gjc": "2023-06-16T10:40:22.000+00:00",
+        "attractionInDate_zch_hwz_gjc": "2023-06-01T10:40:25.000+00:00",
+        "standby1_zch_hwz_gjc": null,
+        "standby2_zch_hwz_gjc": null,
+        "standby3_zch_hwz_gjc": null,
+        "deleted_zch_hwz_gjc": 0
+    },
+    "collectionCount": 2
+})
+const hotAttractionBox = ref(<Element>null)
+const { width } = useElementSize(hotAttractionBox)
 useTitle("首页 / QuickHome")
-// getHotRoomType().then(res => {
-//      //TODO: 需要增加code判断
-//     hotRoomType.value = res.data
-// })
+Promise.all([getHotRoomType(),getHotAttraction()]).then(values => {
+    //TODO:补全
+    console.log(values)
+})
 </script>
 <template>
     <div class="wrap">
@@ -130,8 +181,9 @@ useTitle("首页 / QuickHome")
                 <router-link to="/aboutus" class="hero-about">关于我们 <span aria-hidden="true">→</span></router-link>
             </div>
         </div>
-        <hot-room :hotRoomType="hotRoomType"></hot-room>
-        <div class="search">
+        <hot-room :hotRoomTypeList="hotRoomTypeList"></hot-room>
+        <div class="hot-attraction" ref="hotAttractionBox">
+            <attraction-swiper :attraction="attraction" :width="Number(width / 1.2)"/>
         </div>
     </div>
 </template>
@@ -145,7 +197,7 @@ useTitle("首页 / QuickHome")
     }
 }
 .hero-section {
-    @apply h-screen px-6 lg:px-8 bg-fixed flex items-center justify-center flex-col gap-2;
+    @apply h-screen px-2 sm:px-6 lg:px-8 bg-fixed flex items-center justify-center flex-col gap-2;
     background-image: url("https://picsum.photos/1920/1280?q=1&blur=4");
     .hero-title {
         @apply text-4xl font-bold tracking-tight sm:text-6xl;
@@ -164,8 +216,8 @@ useTitle("首页 / QuickHome")
         @apply hover:text-white hover:underline underline-offset-4;
     }
 }
-.search {
-    @apply h-screen px-6 lg:px-8 bg-fixed flex items-center justify-center flex-col gap-2;
+.hot-attraction {
+    @apply h-screen bg-fixed flex items-center justify-end overflow-hidden;
     background-image: url("https://picsum.photos/1920/1280?q=2&blur=4");
 }
 </style>

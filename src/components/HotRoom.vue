@@ -3,12 +3,12 @@
 import BaseTitle from "@/components/base/Title.vue";
 import type {HotRoomType} from "@/types";
 defineProps<{
-    hotRoomType: HotRoomType[]
+    hotRoomTypeList: HotRoomType[]
 }>()
 </script>
 
 <template>
-    <div class="hot-room" v-for="(item,index) in hotRoomType" :key="item.home?.homeId_zch_hwz_gjc" :style="index%2?`direction: rtl`:''">
+    <div class="hot-room" v-for="(item,index) in hotRoomTypeList" :key="item.home?.homeId_zch_hwz_gjc" :style="index%2?`direction: rtl`:''">
         <base-title class="after:bg-success">{{item.home.homeName_zch_hwz_gjc}}</base-title>
         <div class="hot-room-main">
             <div class="main-left">
@@ -20,7 +20,7 @@ defineProps<{
                         <span>查看详情</span>
                         <span class="detail-icon">
                               <el-icon><Right /></el-icon>
-                            </span>
+                        </span>
                     </div>
                 </div>
                 <div v-motion-fade-visible :style="{ backgroundImage: `url(${item.homeImageList.at(0).imagePath_zch_hwz_gjc})` }" class="hot-room-main-image w-full h-3/5 " v-if="item.homeImageList?.at(0)"></div>
@@ -39,7 +39,7 @@ defineProps<{
 
 <style scoped lang="scss">
 .hot-room{
-    @apply p-20 h-screen;
+    @apply px-2 sm:px-6 lg:px-8 py-20 h-screen;
     .hot-room-main{
         @apply flex gap-4 h-full;
         @apply flex-col sm:flex-row;
