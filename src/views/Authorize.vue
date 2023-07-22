@@ -61,6 +61,12 @@ const changeType = () => {
     type.value = type.value === '1'?'0':'1'
     router.push({path: `/auth/${type.value}`})
     form.value.clearValidate()
+    error.value = <{
+        userPhone: boolean,
+        userPwd: boolean,
+        repeatPassword: boolean,
+        captcha: boolean
+    }>{}
 }
 const formValidate = (prop: FormItemProp, isValid: boolean, message: string) => {
     error.value[prop] = !isValid

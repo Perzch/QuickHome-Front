@@ -5,9 +5,13 @@ const { searchInfo,search,validateCheckinDate,validateCheckoutDate,disabledCheck
 <template>
     <el-form class="form-box" label-width="auto" label-position="top" size="large">
         <el-form-item>
+            <template #label>目的地</template>
+            <el-input v-model="searchInfo.destination" placeholder="目的地" clearable />
+        </el-form-item>
+        <el-form-item>
             <template #label>入住日期</template>
             <el-date-picker
-                    v-model="searchInfo.checkinDate"
+                    v-model="searchInfo.beginDate"
                     type="date"
                     placeholder="入住日期"
                     class="date-picker"
@@ -20,7 +24,7 @@ const { searchInfo,search,validateCheckinDate,validateCheckoutDate,disabledCheck
         <el-form-item>
             <template #label>退房日期</template>
             <el-date-picker
-                    v-model="searchInfo.checkoutDate"
+                    v-model="searchInfo.endDate"
                     type="date"
                     placeholder="退房日期"
                     class="date-picker"

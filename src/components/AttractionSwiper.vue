@@ -53,15 +53,14 @@ const onSlideChange = (swiper) => {
 .swiper {
   @apply h-5/6 mt-10;
   .swiper-slide {
-    @apply h-full flex items-end;
+    @apply flex items-end;
     &.swiper-slide-next {
       .img-div {
-        @apply h-2/3 w-2/3;
+        @apply w-2/3 grayscale;
       }
     }
     .img-div {
-      @apply ml-10 h-full w-full rounded-md bg-center duration-300;
-      background-size: cover;
+      @apply ml-10 w-full aspect-video rounded-md bg-center bg-fixed duration-300 grayscale-0;
     }
   }
   .container-start {

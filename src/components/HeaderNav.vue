@@ -84,10 +84,9 @@ const showDraw = () => {
             @apply flex gap-10 items-center;
             @apply hidden md:flex;
             li {
-                @apply text-gray-500 text-base;
                 a {
-                    @apply p-2 rounded-sm;
-                    @apply hover:text-primary hover:bg-white hover:shadow-inner;
+                    @apply text-gray-800 text-base p-2 rounded-sm;
+                    @apply hover:text-white hover:bg-primary hover:shadow-inner;
                 }
             }
         }

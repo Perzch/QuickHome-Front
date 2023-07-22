@@ -23,7 +23,7 @@ defineProps<{
                         </span>
                     </div>
                 </div>
-                <div v-motion-fade-visible :style="{ backgroundImage: `url(${item.homeImageList.at(0).imagePath_zch_hwz_gjc})` }" class="hot-room-main-image w-full h-3/5 " v-if="item.homeImageList?.at(0)"></div>
+                <div v-motion-fade-visible :style="{ backgroundImage: `url(${item.homeImageList.at(0).imagePath_zch_hwz_gjc})` }" class="hot-room-main-image w-full" v-if="item.homeImageList?.at(0)"></div>
             </div>
             <div class="main-right">
                 <div v-motion-fade-visible :style="{ backgroundImage: `url(${item.homeImageList.at(1).imagePath_zch_hwz_gjc})` }" class="hot-room-main-image flex-3" v-if="item.homeImageList?.at(1)"></div>
@@ -44,7 +44,7 @@ defineProps<{
         @apply flex gap-4 h-full;
         @apply flex-col sm:flex-row;
         .hot-room-main-image {
-            @apply rounded-md bg-center transition-all duration-500;
+            @apply rounded-md bg-center bg-fixed transition-all duration-500 aspect-video;
             &:hover {
                 @apply shadow-xl;
             }
@@ -54,16 +54,19 @@ defineProps<{
             .main-text {
                 @apply flex flex-col gap-2;
                 .show-detail {
-                    @apply self-end flex items-center gap-2 cursor-pointer;
-                    &:hover .detail-icon i {
-                        animation: -right-leave-left-enter 0.5s ease;
+                    @apply self-end flex items-center gap-2 cursor-pointer px-2 py-1 rounded-md;
+                    &:hover {
+                        @apply border-gray-300 shadow-inner;
+                        .detail-icon i {
+                            animation: -right-leave-left-enter 0.5s ease;
+                        }
                     }
                     .detail-icon {
                         @apply flex items-center p-1 bg-success rounded-md text-white;
                     }
                 }
                 .sup {
-                    @apply text-xs text-gray-400;
+                    @apply w-fit text-xs text-gray-400 hover:text-gray-800;
                 }
             }
         }

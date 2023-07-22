@@ -27,6 +27,7 @@
 }
 :root {
   font-family: 'XiHei','宋体','Oblique','微软雅黑', sans-serif;
+  //font-size: 0.88125vw;
   @media (width < 640px) {
     font-size: calc(12px + .1vw);
   }
@@ -71,4 +72,3 @@
     opacity: 0;
   }
 }
-$color1: rgb(18, 18, 18)

@@ -171,19 +171,19 @@ Promise.all([getHotRoomType(),getHotAttraction()]).then(values => {
 </script>
 <template>
     <div class="wrap">
-        <HeaderNav></HeaderNav>
+        <HeaderNav />
         <div class="hero-section">
             <h1 class="hero-title"><span>下一站</span>去哪里？</h1>
-            <search-bar></search-bar>
+            <search-bar />
             <p class="hero-sup">为您提供完美的无人名宿体验是我们的初衷!</p>
             <div class="hero-button-group">
                 <el-button type="primary" size="large" class="hover:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">预订房间</el-button>
                 <router-link to="/aboutus" class="hero-about">关于我们 <span aria-hidden="true">→</span></router-link>
             </div>
         </div>
-        <hot-room :hotRoomTypeList="hotRoomTypeList"></hot-room>
+        <hot-room :hotRoomTypeList="hotRoomTypeList" />
         <div class="hot-attraction" ref="hotAttractionBox">
-            <attraction-swiper :attraction="attraction" :width="Number(width / 1.2)"/>
+            <attraction-swiper :attraction="attraction" :width="Number(width / 1.2 - 100)"/>
         </div>
     </div>
 </template>
