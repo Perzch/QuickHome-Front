@@ -1,9 +1,7 @@
 <script setup lang="ts">
-
-import BaseTitle from "@/components/base/Title.vue";
 import type {HotRoomType} from "@/types";
 defineProps<{
-    hotRoomTypeList: HotRoomType[]
+    hotRoomTypeList: Array<HotRoomType>
 }>()
 </script>
 
@@ -23,14 +21,16 @@ defineProps<{
                         </span>
                     </div>
                 </div>
-                <div v-motion-fade-visible :style="{ backgroundImage: `url(${item.homeImageList.at(0).imagePath_zch_hwz_gjc})` }" class="hot-room-main-image w-full" v-if="item.homeImageList?.at(0)"></div>
+                <div v-if="item.homeImageList[0]"
+                     v-motion-fade-visible
+                     :style="{ backgroundImage: `url(${item.homeImageList[0].imagePath_zch_hwz_gjc})` }" class="hot-room-main-image w-full"></div>
             </div>
             <div class="main-right">
-                <div v-motion-fade-visible :style="{ backgroundImage: `url(${item.homeImageList.at(1).imagePath_zch_hwz_gjc})` }" class="hot-room-main-image flex-3" v-if="item.homeImageList?.at(1)"></div>
+                <div v-motion-fade-visible :style="{ backgroundImage: `url(${item.homeImageList[1].imagePath_zch_hwz_gjc})` }" class="hot-room-main-image flex-3" v-if="item.homeImageList[1]"></div>
                 <div class="flex-1 gap-2 grid grid-cols-3">
-                    <div v-motion-fade-visible :style="{ backgroundImage: `url(${item.homeImageList.at(2).imagePath_zch_hwz_gjc})` }" class="hot-room-main-image" v-if="item.homeImageList?.at(2)"></div>
-                    <div v-motion-fade-visible :style="{ backgroundImage: `url(${item.homeImageList.at(3).imagePath_zch_hwz_gjc})` }" class="hot-room-main-image" v-if="item.homeImageList?.at(3)"></div>
-                    <div v-motion-fade-visible :style="{ backgroundImage: `url(${item.homeImageList.at(4).imagePath_zch_hwz_gjc})` }" class="hot-room-main-image" v-if="item.homeImageList?.at(4)"></div>
+                    <div v-motion-fade-visible :style="{ backgroundImage: `url(${item.homeImageList[2].imagePath_zch_hwz_gjc})` }" class="hot-room-main-image" v-if="item.homeImageList[2]"></div>
+                    <div v-motion-fade-visible :style="{ backgroundImage: `url(${item.homeImageList[3].imagePath_zch_hwz_gjc})` }" class="hot-room-main-image" v-if="item.homeImageList[3]"></div>
+                    <div v-motion-fade-visible :style="{ backgroundImage: `url(${item.homeImageList[4].imagePath_zch_hwz_gjc})` }" class="hot-room-main-image" v-if="item.homeImageList[4]"></div>
                 </div>
             </div>
         </div>

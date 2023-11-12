@@ -21,6 +21,8 @@ declare module 'vue' {
     ElInput: typeof import('element-plus/es')['ElInput']
     ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
     ElLink: typeof import('element-plus/es')['ElLink']
+    ElOption: typeof import('element-plus/es')['ElOption']
+    ElSelect: typeof import('element-plus/es')['ElSelect']
     ElText: typeof import('element-plus/es')['ElText']
     HeaderNav: typeof import('./src/components/HeaderNav.vue')['default']
     HotRoom: typeof import('./src/components/HotRoom.vue')['default']

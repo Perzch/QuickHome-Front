@@ -12,8 +12,7 @@ export default defineConfig({
     port: 7734,
     proxy: {
       "/api": {
-        // target: "https://mock.apifox.cn/m1/2874308-0-default",
-        target: "http://47.98.191.69:7735",
+        target: "http://localhost:8080",
         changeOrigin: true,
         rewrite: (path) => {
           console.log(path)
@@ -24,7 +23,9 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@request': fileURLToPath(new URL('./src/request', import.meta.url)),
+      '@components': fileURLToPath(new URL('./src/components', import.meta.url)),
     }
   },
   css: {

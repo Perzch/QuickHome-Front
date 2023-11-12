@@ -34,6 +34,15 @@ export const useGlobalizationStore = defineStore('globalization',() => {
             }
         }
     }
+    const validateCheckoutDate = () => {
+        if(searchInfo.value?.beginDate && searchInfo.value?.endDate) {
+            if(dayjs(searchInfo.value?.endDate).isBefore(dayjs(searchInfo.value?.beginDate))) {
+                // @ts-ignore
+                ElMessage.warning('退房日期必须大于等于当前日期');
+                searchInfo.value.endDate = ''
+            }
+        }
+    }
 
     const search = async () => {
         if(searchInfo.value.beginDate && searchInfo.value.endDate) {
@@ -44,15 +53,6 @@ export const useGlobalizationStore = defineStore('globalization',() => {
         } else {
             // @ts-ignore
             ElMessage.warning('请选择入住日期和退房日期');
-        }
-    }
-    const validateCheckoutDate = () => {
-        if(searchInfo.value?.beginDate && searchInfo.value?.endDate) {
-            if(dayjs(searchInfo.value?.endDate).isBefore(dayjs(searchInfo.value?.beginDate))) {
-                // @ts-ignore
-                ElMessage.warning('退房日期必须大于等于当前日期');
-                searchInfo.value.endDate = ''
-            }
         }
     }
     return {

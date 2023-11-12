@@ -163,7 +163,7 @@ const attraction = ref(<HotAttraction>{
 })
 const hotAttractionBox = ref(<Element>null)
 const { width } = useElementSize(hotAttractionBox)
-useTitle("首页 / QuickHome")
+// useTitle("首页 / QuickHome")
 Promise.all([getHotRoomType(),getHotAttraction()]).then(values => {
     //TODO:补全
     console.log(values)

@@ -21,9 +21,6 @@
 }
 :root,html,body,div,span,p,i,img,section,main,header,footer,form,input,button,select,a,nav,article,aside,h1,h2,h3,h4,h5,h6 {
   @apply duration-200 ease-in-out transition-all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-property: all;
-  transition-duration: 150ms;
 }
 :root {
   font-family: 'XiHei','宋体','Oblique','微软雅黑', sans-serif;

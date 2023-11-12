@@ -5,6 +5,19 @@ export interface ResponseData<T> {
 }
 
 export interface User {
+    userId?: bigint;
+    userAccount?:string;
+    userName?:string;
+    userPwd?:string;
+    userEmail?:string;
+    userPhone?:string;
+    userInDate?:Date;
+}
+
+export interface UserVerify {
+    userInput: string;
+    userAccount: string;
+    userEmail: string;
     userPhone: string;
     userPwd: string;
     captcha?: string;

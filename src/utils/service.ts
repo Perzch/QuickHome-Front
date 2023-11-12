@@ -1,4 +1,5 @@
 import axios, { type AxiosInstance } from "axios";
+import ResponseData from '@/types'
 
 const service:AxiosInstance = axios.create({
   baseURL: '/api',
@@ -14,6 +15,15 @@ service.interceptors.request.use(config => {
     config.headers['authorization'] = 'Bearer ' + localStorage.getItem('token')
   }
   return config
+})
+
+service.interceptors.response.use((response):ResponseData => {
+  if(response.status === 200) {
+    return response.data
+  }
+  ElMessage.error(Response.data.message)
+}, error => {
+  ElMessage.error(Response.data.error)
 })
 
 export default service
