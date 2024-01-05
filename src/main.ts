@@ -1,11 +1,11 @@
-import './assets/style/index.scss'
-import './utils/scroll-timeline.js'
-import 'https://at.alicdn.com/t/c/font_4139643_3poesq0yetf.js'
+import '@/assets/style/index.scss'
+import '@/assets/style/iconfont/iconfont.js'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 //@ts-ignore
 import { MotionPlugin } from '@vueuse/motion'
+import { autoAnimatePlugin } from '@formkit/auto-animate/vue'
 
 // @ts-ignore
 import App from "@/App.vue";
@@ -21,6 +21,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.component('baseTitle', () => import('@/components/base/Title.vue'))
 app.use(createPinia())
 app.use(MotionPlugin)
+app.use(autoAnimatePlugin)
 app.use(router)
 
 app.mount('#app')

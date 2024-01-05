@@ -1,111 +1,313 @@
-export interface ResponseData<T> {
-    code: number;
-    msg: number;
-    data: T;
+export type ResponseData<T> = Promise<{
+    code: number
+    msg: number
+    data: T
+}>
+
+export type QueryParams = {
+    page?: number,
+    size?: number
+}
+
+export type Page<T> = {
+    countId: number | null
+    current: number
+    maxLimit: number | null
+    optimizeCountSql: boolean
+    orders: unknown[]
+    pages: number
+    records: T[]
+    searchCount: boolean
+    size: number
+    total: number
+}
+
+export type PageResult<T> = ResponseData<Page<T>>
+
+export type HomeSearchInfo = {
+    beginDate: string,
+    endDate: string,
+    homeType?: string,
+    device?: string,
+    minRent: number,
+    maxRent?: number,
+    address?: string,
+    personCount?: number,
+    maxPeople: unknown,
+} & QueryParams
+
+export type HomeSearchResult = {
+    collectionCount: number,
+    homeId: number,
+    home: Home,
+    homeDeviceList: HomeDevice,
+    homeInformation: HomeInformation
 }
 
 export interface User {
-    userPhone: string;
-    userPwd: string;
-    captcha?: string;
-    repeatPassword?: string;
+    userId?: bigint;
+    userAccount?:string;
+    userName?:string;
+    userPwd?:string;
+    userEmail?:string;
+    userPhone?:string;
+    userInDate?:Date;
+    userHeadImage?: string;
+    version?:string;
 }
 
 /**
- * HotRoomType
+ * UserInformation
  */
-export interface HotRoomType {
-    homeId_zch_hwz_gjc: number;//房屋id
-    collectionCount: number;//收藏数
-    home: Home;//房屋信息
-    homeInformation: HomeInformation;//房屋详细信息
-    homeDeviceList: HomeDevice[];//房屋设备列表
-    homeImageList: HomeImage[];//房屋图片列表
+export type UserInformation = {
+    idCardNumber?: string;
+    idCardType?: string;
+    UIId?: number;
+    userBirthday?: Date;
+    userGender?: string;
+    userHeadId?: number;
+    userId?: number;
+    userSignature?: string;
 }
 
+/**
+ * UserHeadImage
+ */
+export interface UserHeadImage {
+    imagePath?: string;
+    inDateTime?: Date;
+    userId?: number;
+    userImageId?: number;
+}
+
+export type UserInfo = {
+    "token"?: string,
+    "userId": number,
+    "user": User
+    "userInformation": UserInformation,
+    "userHeadImage"?: UserHeadImage,
+}
+
+export interface UserVerify {
+    userInput?: string;
+    userAccount?: string;
+    userEmail?: string;
+    userPhone?: string;
+    userPwd?: string;
+    captcha?: string;
+    repeatPassword?: string;
+}
 /**
  * Home
  */
 export interface Home {
-    homeAddress_zch_hwz_gjc: string;//房屋地址
-    homeDayRent_zch_hwz_gjc: number;//房屋日租金
-    homeId_zch_hwz_gjc: number;//房屋id
-    homeName_zch_hwz_gjc: string;//房屋名称
-    homeState_zch_hwz_gjc: number;//房屋状态
-    homeType_zch_hwz_gjc: string;//房屋类型
+    homeAddress: string;//房屋地址
+    homeDayRent: number;//房屋日租金
+    homeImages: string;
+    homeImageList: string[]
+    homeId: number;//房屋id
+    homeName: string;//房屋名称
+    homeState: number;//房屋状态
+    homeType: string;//房屋类型
 }
 
-/**
- * HomeDevice
- */
-export interface HomeDevice {
-    brand_zch_hwz_gjc: string;//品牌
-    deviceID_zch_hwz_gjc: number;//设备id
-    deviceName_zch_hwz_gjc: string;//设备名称
-    deviceProperties_zch_hwz_gjc: string;//设备属性
-    deviceType_zch_hwz_gjc: string;//设备类型
-    homeId_zch_hwz_gjc: number;//房屋id
-    price_zch_hwz_gjc: number;//价格
+export type HomeInformation = {
+    homeInfId?: number
+    homeId?: number
+    homeArea?: number
+    houseStructure?: string
+    maxPerson?: number
+    homeDeposit?: number
+    homeInDate?: Date
 }
 
-/**
- * HomeImage
- */
-export interface HomeImage {
-    homeId_zch_hwz_gjc?: number;//房屋id
-    imageId_zch_hwz_gjc?: number;//图片id
-    imagePath_zch_hwz_gjc?: string;//图片路径
-    inDateTime_zch_hwz_gjc?: Date;//上传时间
+export type HomeDevice={
+    deviceID: number
+    homeId: number
+    deviceName: string
+    deviceType: string
+    brand: string
+    price: number
 }
 
-/**
- * HomeInformation
- */
-export interface HomeInformation {
-    homeArea_zch_hwz_gjc?: number; //房屋面积
-    homeDeposit_zch_hwz_gjc?: number; //房屋押金
-    homeId_zch_hwz_gjc?: number; //房屋id
-    homeInDate_zch_hwz_gjc?: Date; //入住时间
-    homeInfId_zch_hwz_gjc: number; //房屋详细信息id
-    homeStructure_zch_hwz_gjc?: string; //房屋结构
-    maxPerson_zch_hwz_gjc?: number;//最大入住人数
-}
-export interface HotAttraction {
-    attractionImageList: AttractionImage[];
-    attractions: Attractions;
-    attractionsId_zch_hwz_gjc: number;
-    collectionCount: number;
-}
-/**
- * AttractionImage
- */
-export interface AttractionImage {
-    /**
-     * 景点编号
-     */
-    attractionId_zch_hwz_gjc?: number;
-    /**
-     * 图片编号
-     */
-    imageId_zch_hwz_gjc: number;
-    /**
-     * 图片路径
-     */
-    imagePath_zch_hwz_gjc?: string;
-    /**
-     * 上传时间
-     */
-    inDateTime_zch_hwz_gjc?: Date;
+export type HomeCollection = {
+    hFavoriteRecordsId: number
+    userId: number
+    homeId: number
+    home: Home
+    collectionTime: Date
 }
 
-/**
- * Attractions
- */
-export interface Attractions {
-    attractionInDate_zch_hwz_gjc?: Date;//景点记录时间
-    attractionInformation_zch_hwz_gjc?: string;//景点信息
-    attractionsId_zch_hwz_gjc?: number;//景点编号
-    attractionsName_zch_hwz_gjc?: string;//景点名称
-    closingTime_zch_hwz_gjc?: Date; // 景点关闭时间
-    openingTime_zch_hwz_gjc?: Date; // 景点开放时间
+export type Attraction = {
+    attractionId: number
+    attractionName: string
+    attractionInformation: string
+    attractionImages: string
+    attractionImageList: string[]
+    openingTime: Date
+    closingTime: Date
+    attractionInDate: Date
+}
+
+export type AttractionCollection = {
+    aFavoriteRecordsId: number
+    userId: number
+    attractionId: number
+    attraction: Attraction
+    collectionTime: Date
+}
+
+export type Order = {
+    orderId: number
+    homeId: number
+    dynamicDoorPassword: string
+    creationTime: Date
+    endTime: Date
+    checkInTime: Date
+    checkOutTime: Date
+    orderPayment: number
+    orderDeposit: number
+    orderState: number
+    userId: number
+}
+
+export type UserTenant = {
+    name: string
+    phone: string
+    cardIdNumber: string
+}
+
+export type OrderRequestData = {
+    userTenantList: UserTenant[]
+    checkInDate: string
+    checkOutDate: string
+    orderId: number
+    homeId: number
+    userId: number
+    UACID: number
+    maintenanceCost: number
+}
+
+export type RCAMI = {
+    workItemId: number
+    informationCreatTime: Date
+    completionProcessTime: Date
+    RCAMIInformation: string
+    des: string
+    workUserId: number
+    completion: string
+    publisherId: number
+    orderId: number
+    homeId: number
+}
+
+export type Balance = {
+    bid: number,
+    userId: number,
+    userBalance: number,
+    lastModifiedDate: Date,
+    openTime: Date
+}
+
+export type HousingReview = {
+    housingReviewId: number
+    comments: string
+    userId: number
+    homeId: number
+    reviewTime: Date
+    housingReviewRating: number
+    homeLikeCount: number
+    secondHousingReviewId: number
+}
+
+export type AttractionReview = {
+    attractionReviewId: number
+    comments: string
+    userId: number
+    attractionId: number
+    reviewTime: Date
+    attractionLikeCount: number
+    attractionReviewRating: number
+    secondAttractionReviewId: number
+}
+
+export type Manager = {
+    managerId: number
+    managerCategory: string
+    managerAccount: string
+    managerPwd: string
+    managerName: string
+    managerPhone: string
+    managerGender: string
+    managerInDate: Date
+    onlineStatus: string
+}
+
+export type ManagerHomeBinding = {
+    bindingID: number
+    managerID: number
+    homeID: number
+    bindingType: string
+    bindingTime: Date
+    bindingState: string
+}
+
+export type Notification = {
+    userNotificationId: number
+    notificationReleaseTime: Date
+    notifyPostManager: number
+    notificationContent: string
+}
+
+export type Coupon = {
+    couponId: number
+    couponName: string
+    discountMethod: string
+    discountIntensity: number
+    useThreshold: number
+    applicableScope: string
+    discountInformation: string
+    earliestUseTime: Date
+    latestUseTime: Date
+}
+export type UserCoupon = {
+    UACID: number
+    condition: string
+    couponId: number
+    userId: number
+}
+
+export type Log = {
+    logId: number
+    userPerformingId: number
+    executionTime: Date
+    executionContent: string
+    deviceId: string
+    executionPlace: string
+}
+
+export type PaymentPassword = {
+    passwordID: number
+    userID: number
+    paymentPassword: string
+    setTime: Date
+}
+
+export type Identity = {
+    IDCardRecordID: number
+    IDCardName: string
+    IDCardNumber: string
+    IDCardPhoneNumber: string
+    userId: number
+    inDateTime: Date
+}
+
+export type UpdateIdentityRequestData = {
+    userId: number
+    newIDCardName: string
+    newIDCardNumber: string
+    newIDCardPhoneNumber: string
+    oldIDCardName: string
+    oldIDCardNumber: string
+    oldIDCardPhoneNumber: string
 }

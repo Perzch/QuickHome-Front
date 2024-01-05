@@ -17,7 +17,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <p ref="p" class=""><slot /></p>
+    <p ref="p"><slot /></p>
 </template>
 
 <style lang="scss" scoped>

@@ -5,12 +5,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        'text': '#67748e',
+        'title': '#344767',
         'primary': '#174131',
         'error': '#ff1654',
         'danger': '#ee4266',
         'warning': '#ffd23f',
         'success': '#0ead69',
-        'info': '#f3fcf0'
+        'info': '#f3fcf0',
+        'dark': '#141414'
       },
       flex: {
         '1': '1 1 0%',
