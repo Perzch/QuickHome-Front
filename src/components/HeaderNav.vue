@@ -1,15 +1,19 @@
 <script lang='ts' setup>
 import {onBeforeUnmount, onMounted, ref} from "vue";
+import {useGlobalStore} from "@/stores";
+import type {UserInfo} from "@/types";
 
 const headerTracker = ref(<HTMLElement>{})
-const header = ref(<HTMLElement>{})
+const headerRef = ref(<HTMLElement>{})
 const drawer = ref(false)
+const { isLogin,userInfo,getUserInfo } = useGlobalStore()
+getUserInfo()
 let observer:IntersectionObserver;
 onMounted(() => {
     observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
-            header.value.classList.toggle("shadow-sm", !entry.isIntersecting)
-            header.value.classList.toggle("bg-white", !entry.isIntersecting)
+          headerRef.value.classList.toggle("shadow-sm", !entry.isIntersecting)
+          headerRef.value.classList.toggle("bg-white", !entry.isIntersecting)
         })
     })
     observer.observe(headerTracker.value)
@@ -24,27 +28,29 @@ const showDraw = () => {
 <template>
     <div>
         <div class="header-tracker" ref="headerTracker"></div>
-        <header class="header" ref="header">
+        <header class="header" ref="headerRef">
             <div class="h-full">
-                <RouterLink to="/" class="header-logo"><img src="../assets/logo/text.png" alt="QuickHome"/></RouterLink>
+                <router-link to="/" class="header-logo"><img src="../assets/logo/text.png" alt="QuickHome"/></router-link>
             </div>
-            <ul class="router-list">
-                <li><router-link to="/">客房和套房</router-link></li>
-                <li><router-link to="/">预订</router-link></li>
-                <li><router-link to="/">入住</router-link></li>
-            </ul>
             <div class="flex gap-2 items-center">
-                <router-link to="/" class="font-semibold p-1.5 hover:bg-primary hover:text-white rounded-md">
-                    <svg class="icon" aria-hidden="true">
+                <router-link to="/search" class="font-semibold p-1.5 hover:bg-primary hover:text-white rounded-md">
+                    <svg class="icon">
                         <use xlink:href="#iconfsearch"></use>
                     </svg>
                 </router-link>
-                <RouterLink to="/auth/1" class="hidden md:block">
+                <router-link to="/user" v-if="isLogin">
+                  <el-avatar :size="30" :src="'/'+userInfo.user?.userHeadImage">
+                    <template #default>
+                      {{userInfo.user}}
+                    </template>
+                  </el-avatar>
+                </router-link>
+                <router-link to="/auth/1" class="hidden md:block" v-else>
                     <el-button type="primary" size="large" class="login-button">登录<el-icon><Right /></el-icon></el-button>
-                </RouterLink>
+                </router-link>
                 <p class="hover:bg-primary hover:text-white p-2 rounded-md text-xl md:hidden" @click="showDraw">
-                    <svg class="icon" aria-hidden="true">
-                        <use xlink:href="#iconfmenu"></use>
+                    <svg class="icon">
+<!--                        <use xlink:href="#iconfmenu"></use>-->
                     </svg>
                 </p>
             </div>
@@ -63,11 +69,11 @@ const showDraw = () => {
                 </div>
             </template>
             <div class="drawer-main">
-                <div class="drawer-router-list">
-                    <router-link to="/" href="#" class="router-item">客房与套房</router-link>
-                    <router-link to="/" href="#" class="router-item">预约</router-link>
-                    <router-link to="/" href="#" class="router-item">入住</router-link>
-                </div>
+<!--                <div class="drawer-router-list">-->
+<!--                    <router-link to="/" href="#" class="router-item">客房与套房</router-link>-->
+<!--                    <router-link to="/" href="#" class="router-item">预约</router-link>-->
+<!--                    <router-link to="/" href="#" class="router-item">入住</router-link>-->
+<!--                </div>-->
                 <div class="py-6">
                     <RouterLink to="/auth/1">
                         <el-button type="primary" size="large" class="login-button">登录<el-icon><Right /></el-icon></el-button>

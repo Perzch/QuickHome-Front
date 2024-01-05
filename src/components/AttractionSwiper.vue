@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import {Navigation} from "swiper";
 import {ref} from "vue";
-import {HotAttraction} from "@/types";
+import {type HotAttraction} from "@/types";
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
-const swiperButtonPrev = ref(<HTMLElement>null)
-const swiperButtonNext = ref(<HTMLElement>null)
+const swiperButtonPrev = ref(null)
+const swiperButtonNext = ref(null)
 const currentSlidePage = ref(1)
 defineProps<{
     attraction: HotAttraction,
     width: number
 }>()
-const onSlideChange = (swiper) => {
+const onSlideChange = (swiper: any) => {
     currentSlidePage.value = swiper.activeIndex + 1
 }
 </script>
@@ -31,20 +31,20 @@ const onSlideChange = (swiper) => {
     >
         <template v-slot:container-start>
             <div class="container-start">
-                <div class="attraction-title">{{attraction.attractions?.attractionsName_zch_hwz_gjc}}</div>
+                <div class="attraction-title">{{attraction?.attractions?.attractionsName}}</div>
                 <div class="page-tip">
                             <span class="swiper-button-prev detail-icon left-detail-icon" ref="swiperButtonPrev">
                                   <el-icon><Back /></el-icon>
                             </span>
-                    {{currentSlidePage}} / {{attraction.attractionImageList?.length}}
+                    {{currentSlidePage}} / {{attraction?.attractionImageList?.length}}
                     <span class="swiper-button-next detail-icon right-detail-icon" ref="swiperButtonNext">
                                   <el-icon><Right /></el-icon>
                             </span>
                 </div>
             </div>
         </template>
-        <swiper-slide v-for="item in attraction.attractionImageList" :key="item.attractionId_zch_hwz_gjc">
-            <div class="img-div" :style="{backgroundImage: `url(${item.imagePath_zch_hwz_gjc})`}"></div>
+        <swiper-slide v-for="item in attraction.attractionImageList" :key="item.attractionId">
+            <div class="img-div" :style="{backgroundImage: `url(${item.imagePath})`}"></div>
         </swiper-slide>
     </swiper>
 </template>
