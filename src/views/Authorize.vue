@@ -5,8 +5,10 @@ import {useRoute, useRouter} from "vue-router";
 import {encrypt} from "@/utils/encryption";
 //@ts-ignore
 import type {FormInstance, FormRules} from "element-plus";
-import {login as sendLogin, registerByPhone as sendRegister} from "../api/user/user";
+import {login as sendLogin, loginByPhone, registerByPhone as sendRegister} from "../api/user/user";
 import { getPhone as getCaptcha } from '@/api/method/method'
+import {useGlobalStore} from "@/stores";
+import {getUserInfo} from "@/api/user/info";
 type Error = {
   userInput: boolean,
   userPwd: boolean,
@@ -20,6 +22,7 @@ const select = ref('')
 const captcha = ref('')
 const captchaText = ref(<string | number>'获取验证码')
 const type = ref(route.params.type);
+const pass = ref(false);
 const user = ref(<UserVerify>{});
 const error = ref(<Error>{});
 const rules = ref<FormRules>({
@@ -93,18 +96,16 @@ const formValidate = (prop: string, isValid: boolean, message: string) => {
 const sendCaptcha = async () => {
   await form.value.validateField('userInput')
   captcha.value = (await getCaptcha(user.value.userInput,select.value)).data;
-  // 通过raf做读秒效果
+//   做读秒效果
   let time = 60
-  const countDown = () => {
-    if (time === 0) {
-      captchaText.value = '获取验证码'
-      return
-    }
-    captchaText.value = `${time}s后重新获取`
+  const timer = setInterval(() => {
     time--
-    requestAnimationFrame(countDown)
-  }
-  requestAnimationFrame(countDown)
+    captchaText.value = time
+    if(time === 0) {
+      clearInterval(timer)
+      captchaText.value = '获取验证码'
+    }
+  },1000)
 }
 /**
  * @description 注册
@@ -127,15 +128,26 @@ const register = async () => {
  * @description 登录
  */
 const login = async () => {
-  await form.value.validateField(['userInput', 'userPwd'])
-  //TODO: 登录,需要加密
-  const tmp:User = {
-    [select.value]: user.value.userInput,
-    userPwd: encrypt(user.value.userPwd)
+  if(pass) {
+  //   免密登录
+    await form.value .validateField(['userInput', 'captcha'])
+    const {data} = await loginByPhone({
+      userPhone: user.value.userInput
+    })
+    localStorage.setItem('token',data.token)
+    localStorage.setItem('userId',data.userId)
+  } else {
+    await form.value.validateField(['userInput', 'userPwd'])
+    const tmp:User = {
+      [select.value]: user.value.userInput,
+      userPwd: encrypt(user.value.userPwd)
+    }
+    const {data} = (await sendLogin(tmp))
+    localStorage.setItem('token',data.token)
+    localStorage.setItem('userId',data.userId.toString())
   }
-  const res = (await sendLogin(tmp))
-  localStorage.setItem('token',res.data.token)
-  localStorage.setItem('userId',res.data.userId.toString())
+  const {data} = await getUserInfo(localStorage.getItem('userId'))
+  localStorage.setItem('userInfo', data)
   ElMessage.success('登录成功!')
 
   router.push({path: '/'})
@@ -163,28 +175,28 @@ const login = async () => {
           <el-input v-model="user.userInput" placeholder="账号/邮箱/手机号" clearable
                     :class="{'error-input':error.userInput, 'pass-input':error.userInput === false}">
             <template #suffix>
-              <el-button type="primary" size="small" @click="sendCaptcha" :disabled="captchaText !== '获取验证码'" v-if="select === 'userPhone'">
+              <el-button type="primary" size="small" @click="sendCaptcha" :disabled="captchaText !== '获取验证码'" v-if="['userPhone','userEmail'].includes(select) && pass">
                 {{ captchaText }}
               </el-button>
             </template>
           </el-input>
         </el-form-item>
-        <transition>
-          <el-form-item prop="captcha" v-show="select === 'userPhone'">
+        <transition mode="out-in">
+          <el-form-item prop="captcha" v-if="pass || type === '0'">
             <template #label>验证码</template>
             <el-input v-model="user.captcha" placeholder="验证码" clearable
                       :class="{'error-input':error.captcha, 'pass-input':error.captcha === false}">
             </el-input>
           </el-form-item>
         </transition>
-        <transition>
-          <el-form-item prop="userPwd">
+        <transition mode="out-in">
+          <el-form-item prop="userPwd" v-if="!pass || type === '0'">
             <template #label>密码</template>
             <el-input v-model="user.userPwd" placeholder="密码" type="password" show-password clearable
                       :class="{'error-input':error.userPwd, 'pass-input':error.userPwd === false}"/>
           </el-form-item>
         </transition>
-        <transition>
+        <transition mode="out-in">
           <el-form-item prop="repeatPassword" v-if="type === '0'">
             <template #label>确认密码</template>
             <el-input v-model="user.repeatPassword" placeholder="确认密码" type="password" show-password clearable
@@ -196,6 +208,9 @@ const login = async () => {
         <el-button type="primary" size="large" @click="type === '1'?login():register()">
           {{ type === '1' ? '登录' : '注册' }}
         </el-button>
+      </div>
+      <div class="w-fit" v-if="type === '1'">
+        <el-text class="cursor-pointer" @click="pass = !pass">{{pass ? '密码登录' : '免密登录'}}</el-text>
       </div>
     </div>
   </div>

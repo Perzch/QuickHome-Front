@@ -1,138 +1,128 @@
 <script lang="ts" setup>
 import dayjs from "dayjs";
-import {useSearchStore} from "@/stores/search";
-const { searchInfo,toSearch } = useSearchStore()
+import {ref} from "vue";
+import type {HomeSearchInfo} from "@/types";
 
-/**
- * @function disabledCheckoutDate
- * @description This function checks if the checkout date is valid.
- * @param {string} time - The checkout date.
- * @returns {boolean} Returns true if the checkout date is invalid, false otherwise.
- */
-const disabledCheckoutDate = (time:string): boolean => {
+const props = defineProps<{
+  all?: boolean
+  modelValue?: HomeSearchInfo
+}>()
+const emit = defineEmits(['update:modelValue','search'])
+
+const form = ref<HomeSearchInfo>({
+  ...props.modelValue
+} as any)
+const deviceList = ref([])
+const homeTypeList = ref([])
+
+
+const timeRange = ref([
+    dayjs().format('YYYY-MM-DD'),
+  dayjs().add(1,'day').format('YYYY-MM-DD')
+])
+
+const disabledDate = (time:string): boolean => {
   const day = dayjs(time)
-  // 三个条件: 1. 退房日期小于入住日期 2. 退房日期大于入住日期+180天 3. 退房日期小于当前日期
-  const arr = [day.isBefore(dayjs(searchInfo.beginDate),'day'),day.isAfter(dayjs(searchInfo.beginDate).add(180,'day')),day.isBefore(dayjs().subtract(1,'day'),'day')]
-  return arr.some(item => item)
+  // 当天前一天的日期禁用
+  return day.isBefore(dayjs().subtract(1,'day'),'day')
 }
 
-/**
- * @function disabledCheckinDate
- * @description This function checks if the checkin date is valid.
- * @param {string} time - The checkin date.
- * @returns {boolean} Returns true if the checkin date is invalid, false otherwise.
- */
-const disabledCheckinDate = (time:string): boolean => {
-  const day = dayjs(time)
-  // 三个条件: 1. 入住日期小于当前日期-1天 2. 入住日期大于退房日期
-  const arr = [day.isBefore(dayjs().subtract(1,'day'),'day'),searchInfo.endDate && day.isAfter(dayjs(searchInfo.endDate))]
-  return arr.some(item => item)
-}
-
-/**
- * @function validateCheckinDate
- * @description This function validates the checkin date.
- */
-const validateCheckinDate = () => {
-  if(searchInfo?.beginDate && searchInfo?.endDate) {
-    if(dayjs(searchInfo?.endDate).isBefore(dayjs(searchInfo?.beginDate))) {
-      ElMessage.warning("入住日期必须大于等于当前日期");
-      searchInfo.beginDate = ''
-    }
+const handleSearch = () => {
+  form.value.beginDate = timeRange.value[0]
+  form.value.endDate = timeRange.value[1]
+  if(form.value.personCount && form.value.roomCount) {
+    form.value.maxPeople = Math.ceil(form.value.personCount / form.value.roomCount)
   }
-}
-
-/**
- * @function validateCheckoutDate
- * @description This function validates the checkout date.
- */
-const validateCheckoutDate = () => {
-  if(searchInfo?.beginDate && searchInfo?.endDate) {
-    if(dayjs(searchInfo?.endDate).isBefore(dayjs(searchInfo?.beginDate))) {
-      ElMessage.warning('退房日期必须大于等于当前日期');
-      searchInfo.endDate = ''
-    }
-  }
+  form.value.device = deviceList.value.join(',')
+  form.value.homeType = homeTypeList.value.join(',')
+  emit('update:modelValue',form.value)
+  emit('search')
 }
 </script>
 <template>
-    <el-form class="form-box" label-width="auto" label-position="top" size="large">
-      <el-row >
-        <el-col :span="22">
-          <el-form-item class="destination" label="目的地" label-width="100%">
-              <el-input v-model="searchInfo.address" placeholder="目的地" clearable />
-          </el-form-item>
-        </el-col>
-        <el-col :span="2">
-          <el-form-item>
-            <button class="font-semibold p-2 hover:bg-primary hover:text-white rounded-md flex items-center gap-1 w-fit" @click.prevent="toSearch">
-              <span>搜索</span>
-              <svg class="icon">
-                <use xlink:href="#iconfsearch"></use>
-              </svg>
-            </button>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <div class="search-condition">
-        <el-form-item>
+    <el-form class="form-box" :class="{ 'all':all }" label-width="auto" label-position="top" size="large">
+        <el-form-item class="address" label="目的地" label-width="100%">
+            <el-input v-model="form.address" placeholder="目的地" clearable />
+        </el-form-item>
+        <el-form-item class="time-range" v-if="all">
             <template #label>入住日期</template>
             <el-date-picker
-                    v-model="searchInfo.beginDate"
-                    type="date"
-                    placeholder="入住日期"
-                    class="date-picker"
-                    format="YYYY/MM/DD"
-                    value-format="YYYY-MM-DD"
-                    :disabled-date="disabledCheckinDate"
-                    @change="validateCheckinDate"
+                v-model="timeRange"
+                type="daterange"
+                range-separator="-"
+                start-placeholder="入住日期"
+                value-format="YYYY-MM-DD"
+                end-placeholder="退房日期"
+                :clearable="false"
+                :disabled-date="disabledDate"
             />
         </el-form-item>
-        <el-form-item>
-            <template #label>退房日期</template>
-            <el-date-picker
-                    v-model="searchInfo.endDate"
-                    type="date"
-                    placeholder="退房日期"
-                    class="date-picker"
-                    format="YYYY/MM/DD"
-                    value-format="YYYY-MM-DD"
-                    :disabled-date="disabledCheckoutDate"
-                    @change="validateCheckoutDate"
-            />
-        </el-form-item>
-        <el-form-item>
-            <template #label>房间数量</template>
-            <el-input-number v-model="searchInfo.roomCount" :min="1" :max="10"></el-input-number>
-        </el-form-item>
-        <el-form-item>
+        <el-form-item class="person-count" v-if="all">
             <template #label>人数</template>
-            <el-input-number v-model="searchInfo.personCount" :min="1"></el-input-number>
+            <el-input-number v-model="form.personCount" :min="1"></el-input-number>
         </el-form-item>
-      </div>
+      <el-form-item class="execute">
+        <button class="font-semibold p-2 hover:bg-primary hover:text-white rounded-md flex items-center gap-1 w-fit whitespace-nowrap" @click.prevent="handleSearch">
+          <span>搜索</span>
+          <svg class="icon">
+            <use xlink:href="#iconfsearch"></use>
+          </svg>
+        </button>
+      </el-form-item>
+      <el-form-item class="home-type" v-if="all">
+        <template #label>房型</template>
+        <el-select multiple v-model="homeTypeList" clearable placeholder="房型" collapse-tags collapse-tags-tooltip :max-collapse-tags="3">
+          <el-option v-for="item in ['情侣房','大床房','电竞房']" :key="item" :label="item" :value="item"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item class="min-rent" v-if="all">
+        <template #label>最小价格</template>
+        <el-input-number v-model="form.minRent" placeholder="最小价格" :min="50"></el-input-number>
+      </el-form-item>
+      <el-form-item class="max-rent" v-if="all">
+        <template #label>最大价格</template>
+        <el-input-number v-model="form.maxRent" placeholder="最大价格" :max="10000"></el-input-number>
+      </el-form-item>
+      <el-form-item class="device-list" v-if="all">
+        <template #label>设备</template>
+        <el-select multiple v-model="deviceList" clearable placeholder="设备" collapse-tags collapse-tags-tooltip :max-collapse-tags="3">
+          <el-option v-for="item in ['空调','热水器','冰箱','洗衣机']" :key="item" :label="item" :value="item"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item class="room-count" v-if="all">
+        <template #label>房间数量</template>
+        <el-input-number v-model="form.roomCount" :min="1" :max="10"></el-input-number>
+      </el-form-item>
     </el-form>
 </template>
 <style lang="scss" scoped>
 .form-box {
-  @apply p-4 bg-gray-100 shadow-lg rounded-md;
-  // 响应式调整
-  @apply sm:gap-4 md:gap-4 lg:gap-4 xl:gap-4 2xl:gap-4;
-  .search-condition {
-    @apply flex-1 items-center justify-center flex flex-wrap gap-4;
+  @apply p-4 bg-gray-100 shadow-lg rounded-md grid grid-cols-12 items-center w-2/3;
+  .address {
+    @apply col-span-11;
   }
-  .el-select {
-    // 去除聚焦时的边框
-    --el-select-input-focus-border-color: transparent;
-    --el-border-color-hover: transparent;
+  .execute {
+    @apply col-span-1;
   }
-  :deep(.el-form-item) {
-    @apply flex flex-col;
-    // 响应式调整宽度
-    @apply w-full sm:w-auto md:w-auto lg:w-auto xl:w-auto 2xl:w-auto;
-    // 响应式调整
-    @apply items-center sm:items-start md:items-start lg:items-start xl:items-start 2xl:items-start;
-    &.destination {
-      @apply w-full items-stretch;
+  &.all{
+    @apply p-4 bg-transparent grid-cols-12 grid-rows-2 grid gap-4 w-11/12 bg-white border;
+    .address {
+      @apply col-span-5;
+    }
+    .time-range {
+      @apply col-span-4;
+    }
+    .room-count,.person-count {
+      @apply col-span-2;
+    }
+    .home-type {
+      @apply col-span-3;
+    }
+    .min-rent,.max-rent {
+      @apply col-span-2;
+    }
+    .device-list {
+      @apply col-span-3;
     }
   }
 }

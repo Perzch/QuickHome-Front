@@ -1,21 +1,20 @@
 import {defineStore} from "pinia";
-import {computed, ref} from "vue";
+import {computed, ref, watch} from "vue";
 import type {HomeSearchInfo} from "@/types";
 import dayjs from "dayjs";
-import {now} from "@vueuse/core";
+import {now, useStorage} from "@vueuse/core";
 import {useRouter} from "vue-router";
+import {listHome} from "@/api/home/home";
 
 export const useSearchStore = defineStore('search', () => {
     const {push} = useRouter()
-    const searchInfo = ref<HomeSearchInfo>({
+    const searchInfo = useStorage<HomeSearchInfo>('searchInfo', {
         beginDate: dayjs(now()).format('YYYY-MM-DD'),
         endDate: dayjs(now()).add(1,'day').format('YYYY-MM-DD'),
         minRent: 50,
         personCount: 1,
         roomCount: 1,
-        maxPeople: computed(() => {
-                return Math.ceil(searchInfo.value.personCount / searchInfo.value.roomCount)
-        }),
+        maxPeople: 1,
         page: 1,
         size: 10
     })
@@ -25,9 +24,12 @@ export const useSearchStore = defineStore('search', () => {
      */
     const toSearch = () => {
         if(searchInfo.value.beginDate && searchInfo.value.endDate) {
+            if(searchInfo.value.roomCount && searchInfo.value.personCount) {
+                searchInfo.value.maxPeople = Math.ceil(searchInfo.value.personCount / searchInfo.value.roomCount)
+            }
             push({
                 path: '/search',
-                query: searchInfo.value
+                query: searchInfo.value as any
             })
         } else {
             ElMessage.warning('请选择入住日期和退房日期');
