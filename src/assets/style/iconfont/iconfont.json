@@ -6,6 +6,20 @@
   "description": "快家",
   "glyphs": [
     {
+      "icon_id": "1053868",
+      "name": "like",
+      "font_class": "like",
+      "unicode": "e773",
+      "unicode_decimal": 59251
+    },
+    {
+      "icon_id": "11215202",
+      "name": "checkin",
+      "font_class": "checkin",
+      "unicode": "e6f4",
+      "unicode_decimal": 59124
+    },
+    {
       "icon_id": "145156",
       "name": "阴",
       "font_class": "yin",

@@ -2,9 +2,11 @@
 import {useGlobalStore} from "@/stores";
 import {computed, ref, watch} from "vue";
 import {listCoupon} from "@/api/coupon/coupon";
+import type {Coupon, CouponResult, UserCoupon} from "@/types";
+import {useRoute, useRouter} from "vue-router";
 const { userInfo } = useGlobalStore()
 const loading = ref(false)
-const list= ref([])
+const list= ref<CouponResult[]>([] as CouponResult[])
 const total = ref(0)
 const queryParams = computed(() => ({
   userId: userInfo.userId,
@@ -20,6 +22,22 @@ const getList =async () => {
   loading.value = false
 }
 watch(() => queryParams.value, getList, {immediate: true})
+
+const route = useRoute()
+const router = useRouter()
+const select = ref(Boolean(route.query.select))
+const price = ref(Number(route.query.price))
+
+const selectCoupon = (item:CouponResult) => {
+  if(select.value) {
+    window.opener.postMessage({
+      couponResult: JSON.parse(JSON.stringify(item))
+    }, '*')
+    window.close()
+  } else {
+    router.push('/')
+  }
+}
 </script>
 
 <template>
@@ -32,26 +50,26 @@ watch(() => queryParams.value, getList, {immediate: true})
     </div>
     <div class="coupon__content">
       <div class="coupon-list">
-        <div class="coupon-item" v-for="{coupon} in list" :key="coupon.couponId">
+        <div class="coupon-item" v-for="item in list" :key="item.coupon.couponId">
           <div class="coupon-item__intensity">
-            <template v-if="coupon.discountMethod === '折扣'"><span class="text-2xl">{{coupon.discountIntensity * 10}}</span>折</template>
-            <template v-else>￥<span class="text-2xl">{{coupon.discountIntensity}}</span></template>
+            <template v-if="item.coupon.discountMethod === '折扣'"><span class="text-2xl">{{item.coupon.discountIntensity * 10}}</span>折</template>
+            <template v-else>￥<span class="text-2xl">{{item.coupon.discountIntensity}}</span></template>
           </div>
           <div class="coupon-item__info">
             <div class="coupon-item__name">
-              {{coupon.couponName}}
+              {{item.coupon.couponName}}
             </div>
             <div class="coupon-item__information">
-              {{coupon.discountInformation}}
+              {{item.coupon.discountInformation}}
             </div>
             <div class="coupon-item__condition">
-              订单需满 <span class="text-danger">￥{{coupon.useThreshold}}</span>
+              订单需满 <span class="text-danger">￥{{item.coupon.useThreshold}}</span>
             </div>
             <div class="coupon-item__time">
-              {{coupon.earliestUseTime}}-{{coupon.latestUseTime}}
+              {{item.coupon.earliestUseTime}}-{{item.coupon.latestUseTime}}
             </div>
           </div>
-          <div class="coupon-item__button">立即使用</div>
+          <div class="coupon-item__button" @click="selectCoupon(item)" v-if="!select || price && price > item.coupon.useThreshold">{{select ? '选择' : '立即使用'}}</div>
         </div>
       </div>
       <div class="flex justify-end my-4">
@@ -72,7 +90,7 @@ watch(() => queryParams.value, getList, {immediate: true})
 .title {
   @apply mb-4;
   h1 {
-    @apply text-2xl font-semibold text-primary;
+    @apply text-2xl font-semibold underline underline-offset-[-2px] decoration-8 decoration-success;
   }
 }
 .coupon-list {

@@ -8,7 +8,25 @@ import dayjs from "dayjs";
 
 const { userInfo } = useGlobalStore()
 const loading = ref(false)
-const rules = {}
+const rules = {
+  'user.userName': [
+    { required: true ,message: '姓名不能为空' }
+  ],
+  'user.userEmail': [
+    { required: true ,message: '邮箱不能为空' },
+    { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
+  ],
+  'user.userPhone': [
+    { required: true ,message: '电话不能为空' },
+    { pattern: /^1[3456789]\d{9}$/, message: '请输入正确的电话号码', trigger: 'blur' }
+  ],
+  'userInformation.userGender': [
+    { required: true ,message: '性别不能为空' }
+  ],
+  'userInformation.userBirthday': [
+    { required: true ,message: '出生日期不能为空' }
+  ],
+}
 const form = ref<UserInfo>(userInfo)
 const editAble = ref(false)
 const uploadOptions = computed(() => ({
@@ -54,11 +72,9 @@ const confirmEdit = async () => {
       <div class="user-info__item user-info__account">
         <span class="user-info__item__label">头像</span>
         <div class="user-info__item__main">
-          <el-collapse-transition>
-            <el-avatar :src="'/' + userInfo.user.userHeadImage" size="large" v-if="!editAble"></el-avatar>
-          </el-collapse-transition>
-          <el-collapse-transition>
-            <el-upload v-bind="uploadOptions" :file-list="fileList" :on-success="fileListChange" v-if="editAble">
+          <el-collapse-transition mode="out-in">
+            <el-avatar :src="userInfo.user.userHeadImage" size="large" v-if="!editAble"></el-avatar>
+            <el-upload v-bind="uploadOptions" :file-list="fileList" :on-success="fileListChange" v-else>
               <el-icon><Plus/></el-icon>
             </el-upload>
           </el-collapse-transition>
@@ -73,63 +89,55 @@ const confirmEdit = async () => {
       <div class="user-info__item user-info__name">
         <span class="user-info__item__label">姓名</span>
         <div class="user-info__item__main">
-          <el-collapse-transition>
+          <el-collapse-transition mode="out-in">
             <el-form-item prop="user.userName" v-if="editAble">
               <el-input v-model="form.user.userName" placeholder="请输入姓名"></el-input>
             </el-form-item>
-          </el-collapse-transition>
-          <el-collapse-transition>
-            <span class="user-info__item__text" v-show="!editAble">{{userInfo.user.userName}}</span>
+            <span class="user-info__item__text" v-else>{{userInfo.user.userName}}</span>
           </el-collapse-transition>
         </div>
       </div>
       <div class="user-info__item user-info__email">
         <span class="user-info__item__label">邮箱</span>
         <div class="user-info__item__main">
-          <el-collapse-transition>
-            <el-form-item prop="user.userEmail" v-show="editAble">
-              <el-input v-model="form.user.userEmail" placeholder="请输入邮箱"></el-input>
+          <el-collapse-transition mode="out-in">
+            <el-form-item prop="user.userEmail" v-if="editAble">
+              <el-input type="email" v-model="form.user.userEmail" placeholder="请输入邮箱"></el-input>
             </el-form-item>
-          </el-collapse-transition>
-          <el-collapse-transition>
-            <span class="user-info__item__text" v-show="!editAble">{{userInfo.user.userEmail}}</span>
+            <span class="user-info__item__text" v-else>{{userInfo.user.userEmail}}</span>
           </el-collapse-transition>
         </div>
       </div>
       <div class="user-info__item user-info__phone">
         <span class="user-info__item__label">电话</span>
         <div class="user-info__item__main">
-          <el-collapse-transition>
-            <el-form-item prop="user.userPhone" v-show="editAble">
-              <el-input v-model="form.user.userPhone" placeholder="请输入电话"></el-input>
+          <el-collapse-transition mode="out-in">
+            <el-form-item prop="user.userPhone" v-if="editAble">
+              <el-input type="tel" v-model="form.user.userPhone" placeholder="请输入电话"></el-input>
             </el-form-item>
-          </el-collapse-transition>
-          <el-collapse-transition>
-            <span class="user-info__item__text" v-show="!editAble">{{userInfo.user.userPhone}}</span>
+            <span class="user-info__item__text" v-else="!editAble">{{userInfo.user.userPhone}}</span>
           </el-collapse-transition>
         </div>
       </div>
       <div class="user-info__item user-info__gender">
         <span class="user-info__item__label">性别</span>
         <div class="user-info__item__main">
-          <el-collapse-transition>
-            <el-form-item prop="userInformation.userGender" v-show="editAble">
+          <el-collapse-transition mode="out-in">
+            <el-form-item prop="userInformation.userGender" v-if="editAble">
               <el-radio-group v-model="form.userInformation.userGender">
                 <el-radio label="男">男</el-radio>
                 <el-radio label="女">女</el-radio>
               </el-radio-group>
             </el-form-item>
-          </el-collapse-transition>
-          <el-collapse-transition>
-            <span class="user-info__item__text" v-show="!editAble">{{userInfo.userInformation.userGender}}</span>
+            <span class="user-info__item__text" v-else>{{userInfo.userInformation.userGender}}</span>
           </el-collapse-transition>
         </div>
       </div>
       <div class="user-info__item user-info__birthday">
         <span class="user-info__item__label">出生日期</span>
         <div class="user-info__item__main">
-          <el-collapse-transition>
-            <el-form-item prop="userInformation.userBirthday" v-show="editAble">
+          <el-collapse-transition mode="out-in">
+            <el-form-item prop="userInformation.userBirthday" v-if="editAble">
               <el-date-picker
                   v-model="form.userInformation.userBirthday"
                   type="date"
@@ -137,22 +145,18 @@ const confirmEdit = async () => {
                   value-format="YYYY-MM-DD HH:mm:ss"
               />
             </el-form-item>
-          </el-collapse-transition>
-          <el-collapse-transition>
-            <span class="user-info__item__text" v-show="!editAble">{{dayjs(userInfo.userInformation.userBirthday).format("YYYY年MM月DD")}}</span>
+            <span class="user-info__item__text" v-else>{{dayjs(userInfo.userInformation.userBirthday).format("YYYY年MM月DD")}}</span>
           </el-collapse-transition>
         </div>
       </div>
       <div class="user-info__item user-info__signature">
         <span class="user-info__item__label">个性签名</span>
         <div class="user-info__item__main">
-          <el-collapse-transition>
-            <el-form-item prop="userInformation.userSignature" v-show="editAble">
+          <el-collapse-transition mode="out-in">
+            <el-form-item prop="userInformation.userSignature" v-if="editAble">
               <el-input type="textarea" :rows="2" v-model="form.userInformation.userSignature" placeholder="请输入"></el-input>
             </el-form-item>
-          </el-collapse-transition>
-          <el-collapse-transition>
-            <span class="user-info__item__text" v-show="!editAble">{{userInfo.userInformation.userSignature}}</span>
+            <span class="user-info__item__text" v-else>{{userInfo.userInformation.userSignature}}</span>
           </el-collapse-transition>
         </div>
       </div>
@@ -176,9 +180,7 @@ const confirmEdit = async () => {
     @apply flex items-center justify-between;
     .title {
       h1 {
-        @apply text-2xl font-semibold text-primary;
-      }
-      h3 {
+        @apply text-2xl font-semibold underline underline-offset-[-2px] decoration-8 decoration-success;
       }
     }
   }

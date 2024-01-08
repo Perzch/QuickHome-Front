@@ -1,8 +1,8 @@
 import service from '@/utils/service'
-import type {HomeSearchInfo, HomeSearchResult, ResponseData} from "@/types";
+import type {Home, HomeSearchInfo, HomeSearchResult, ResponseData, Result} from "@/types";
 
 const url = `/home`
-export function listHome(params: HomeSearchInfo):Promise<ResponseData<HomeSearchResult>> {
+export function listHome(params: HomeSearchInfo):Promise<ResponseData<HomeSearchResult[]>> {
     return service({
         url: `${url}/list`,
         method: 'get',
@@ -26,7 +26,7 @@ export function checkHome(params) {
     })
 }
 
-export function getHome(id){
+export function getHome(id:number):Result<HomeSearchResult>{
     return service({
         url: `${url}/${id}`,
         method: 'get'

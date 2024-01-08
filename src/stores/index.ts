@@ -2,7 +2,9 @@ import {defineStore} from "pinia";
 import {useStorage} from "@vueuse/core";
 import {getUserInfo as getUInfo} from "@/api/user/info";
 import type {UserInfo} from "@/types";
-import {computed} from "vue";
+import {computed, watch} from "vue";
+import {useRouter} from "vue-router";
+import {offline} from "@/api/manager/manager";
 
 
 /**
@@ -15,6 +17,7 @@ export const useGlobalStore = defineStore('global',() => {
     const token = useStorage('token', '')
     const userInfo = useStorage<UserInfo>('userInfo', {} as UserInfo)
     const isLogin = computed(() => userId.value && token.value)
+    const router = useRouter()
     const getUserInfo = async ():Promise<UserInfo | undefined> => {
         if(userId.value && token.value) {
             const {data} = await getUInfo(Number(userId.value))
@@ -22,7 +25,15 @@ export const useGlobalStore = defineStore('global',() => {
             return data
         }
     }
+    const logout = () => {
+        localStorage.setItem('userId', '')
+        localStorage.setItem('token', '')
+        localStorage.removeItem('searchInfo')
+        localStorage.removeItem('userInfo')
+        router.push('/auth/1')
+    }
     return {
+        logout,
         userInfo,
         isLogin,
         getUserInfo,

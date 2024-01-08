@@ -16,3 +16,13 @@
     //    @apply outline-none shadow-none
     //}
 }
+:deep(.el-input--large) {
+    font-size: inherit;
+}
+:deep(.el-form-item--large) {
+    --font-size: inherit;
+    font-size: inherit;
+}
+:deep(.el-radio.el-radio--large .el-radio__label) {
+    font-size: inherit;
+}

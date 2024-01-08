@@ -18,11 +18,11 @@ export function login(data) {
     })
 }
 
-export function loginByPhone(data) {
+export function loginByPhone(params) {
     return service({
-        method: 'get',
+        method: 'post',
         url: url + '/login/phone',
-        data
+        params
     })
 }
 

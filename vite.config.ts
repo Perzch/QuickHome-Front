@@ -27,14 +27,16 @@ export default defineConfig(async ({ command, mode}) => {
             target: 'https://quickhome-1315319695.cos.ap-chengdu.myqcloud.com/',
             changeOrigin: true,
             rewrite: (path) => {
-              return path.replace(`${env.VITE_BASE_URL}`, '')
+              return path
             }
           }
       },
     },
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, 'src')
+        '@': path.resolve(__dirname, 'src'),
+        '@components': path.resolve(__dirname, 'src/components'),
+        '@assets': path.resolve(__dirname, 'src/assets'),
       }
     },
     css: {

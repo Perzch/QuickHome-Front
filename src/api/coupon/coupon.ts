@@ -1,14 +1,10 @@
 import service from "@/utils/service";
-import type {Coupon, Page, PageResult, ResponseData, UserCoupon} from "@/types";
+import type {Coupon, CouponResult, Page, PageResult, QueryParams, ResponseData, UserCoupon} from "@/types";
 
 const url = `/coupon`
 
-type Result = {
-    coupon: Coupon
-    usersAndCoupons: UserCoupon
-}
 
-export function listCoupon(params): PageResult<Result> {
+export function listCoupon(params: {userId:number} & QueryParams): PageResult<CouponResult> {
     return service({
         method: 'get',
         url: url + '/list',
@@ -50,11 +46,11 @@ export function releaseCoupon(data){
     })
 }
 
-export function useCoupon(UACID) {
+export function useCoupon(UACID:number) {
     localStorage.setItem('execute', '使用优惠券')
     return service({
         method: 'put',
-        url,
+        url: url + '/use',
         params: {UACID}
     })
 }

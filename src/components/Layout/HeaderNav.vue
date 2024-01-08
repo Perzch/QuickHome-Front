@@ -30,7 +30,7 @@ const showDraw = () => {
         <div class="header-tracker" ref="headerTracker"></div>
         <header class="header" ref="headerRef">
             <div class="h-full">
-                <router-link to="/" class="header-logo"><img src="../assets/logo/text.png" alt="QuickHome"/></router-link>
+                <router-link to="/" class="header-logo"><img src="../../assets/logo/text.png" alt="QuickHome"/></router-link>
             </div>
             <div class="flex gap-2 items-center">
                 <router-link to="/search" class="font-semibold p-1.5 hover:bg-primary hover:text-white rounded-md">
@@ -39,7 +39,7 @@ const showDraw = () => {
                     </svg>
                 </router-link>
                 <router-link to="/user" v-if="isLogin">
-                  <el-avatar :size="30" :src="'/'+userInfo.user?.userHeadImage">
+                  <el-avatar :size="30" :src="userInfo.user?.userHeadImage">
                     <template #default>
                       {{userInfo.user}}
                     </template>
@@ -64,7 +64,7 @@ const showDraw = () => {
             <template #header>
                 <div class="h-16 flex items-center justify-between">
                     <router-link to="/" class="-m-1.5 p-1.5 h-full">
-                        <img class="h-full w-auto" src="../assets/logo.svg" alt="QuickHome">
+                        <img class="h-full w-auto" src="../../assets/logo.svg" alt="QuickHome">
                     </router-link>
                 </div>
             </template>

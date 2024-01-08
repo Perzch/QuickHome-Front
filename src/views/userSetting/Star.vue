@@ -3,7 +3,7 @@ import {ref, watch} from "vue";
 import {useGlobalStore} from "@/stores";
 import {delCollection as delHomeCollection, listCollection as listHomeCollection} from "@/api/home/collection";
 import {delCollection as delAttractionCollection, listCollection as listAttractionCollection} from "@/api/attraction/collection";
-import type {AttractionCollection, HomeCollection} from "@/types";
+import type {Attraction, AttractionCollection, HomeCollection} from "@/types";
 import {Location} from "@element-plus/icons-vue";
 import {useRouter} from "vue-router";
 
@@ -41,7 +41,7 @@ const getList = async () => {
 }
 watch(() => queryParams.value, getList, {immediate: true})
 
-const remove = (id) => {
+const remove = (id: number) => {
   ElMessageBox.confirm('此操作将永久删除该收藏, 是否继续?', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
@@ -61,12 +61,12 @@ const remove = (id) => {
 }
 
 const router = useRouter()
-const to = (item) => {
+const to = (item: Attraction | HomeCollection) => {
   const key = tab.value ? 'attractionId' : 'homeId'
   router.push({
     path: tab.value ? '/attraction/detail' : '/home/detail',
     query: {
-      id: item[key]
+      id: item[key as keyof typeof item]
     }
   })
 }
@@ -124,14 +124,14 @@ const marks = {
         <div class="collection-list">
           <el-card v-for="item in attractionList" :key="item.aFavoriteRecordsId" shadow="hover" class="collection-list__item" @click="to(item)">
             <div class="collection-list__item__img">
-              <img :src="'/' + item.attraction.attractionImageList[0]" alt="">
+              <img :src="item.attraction.attractionImages?.split(',')[0]" alt="">
             </div>
             <div class="collection-list__item__content">
               <h3 class="collection-list__item__content__name">{{item.attraction.attractionName}}</h3>
               <p class="collection-list__item__content__info" v-html="item.attraction.attractionInformation"></p>
               <p class="collection-list__item__content__time__label">开放时间:</p>
               <p class="collection-list__item__content__time">
-                <el-slider :model-value="timeComputeNumber(item.attraction.openingTime,item.attraction.closingTime)" range :marks="marks" :step=".5" :max="24" :min="0" :format-tooltip="sliderFormatTooltip"/>
+                <el-slider :model-value="timeComputeNumber(item.attraction.openingTime.toString(),item.attraction.closingTime.toString())" range :marks="marks" :step=".5" :max="24" :min="0" :format-tooltip="sliderFormatTooltip"/>
               </p>
             </div>
             <div class="flex justify-end">
@@ -158,7 +158,7 @@ const marks = {
 .title {
   @apply mb-4;
   h1 {
-    @apply text-2xl font-semibold text-primary;
+    @apply text-2xl font-semibold underline underline-offset-[-2px] decoration-8 decoration-success;
   }
 }
 .collection-list {

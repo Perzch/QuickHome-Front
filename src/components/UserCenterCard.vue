@@ -7,12 +7,17 @@ const props = defineProps<{
   placeholder: string
   link: string,
   path: string,
-  icon: unknown
+  icon: unknown,
+  click?: () => void
 }>()
 const card = ref()
 const router = useRouter()
 const to = () => {
-  router.push(`/userSettings/${props.path}`)
+  if(props.click) {
+    props.click()
+  } else  {
+    router.push(`/user/settings/${props.path}`)
+  }
 }
 </script>
 

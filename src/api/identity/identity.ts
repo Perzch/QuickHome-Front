@@ -1,9 +1,9 @@
 import service from "@/utils/service";
-import type {Identity, PageResult} from "@/types";
+import type {Identity, PageResult, QueryParams, Result, UpdateIdentityRequestData} from "@/types";
 
 const url = `/identity`
 
-export function listIdentity(params):PageResult<Identity> {
+export function listIdentity(params: {userId: number} & QueryParams):PageResult<Identity> {
     return service({
         method: 'get',
         url: url + '/list',
@@ -20,7 +20,7 @@ export function addIdentity(data){
     })
 }
 
-export function updateIdentity(data){
+export function updateIdentity(data:UpdateIdentityRequestData){
     localStorage.setItem('execute', '修改实名信息')
     return service({
         method: 'put',
@@ -29,7 +29,7 @@ export function updateIdentity(data){
     })
 }
 
-export function deleteIdentity(data){
+export function deleteIdentity(data:Identity){
     localStorage.setItem('execute', '删除实名信息')
     return service({
         method: 'delete',
@@ -38,7 +38,7 @@ export function deleteIdentity(data){
     })
 }
 
-export function getIdentityByOrder(id) {
+export function getIdentityByOrder(id:number):Result<Identity[]> {
     return service({
         method: 'get',
         url: `${url}/order/${id}`

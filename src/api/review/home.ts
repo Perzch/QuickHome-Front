@@ -1,11 +1,12 @@
 import service from "@/utils/service";
+import type {HousingReview, PageResult, QueryParams, Result} from "@/types";
 
 const url = `/review/home`
 
-export function listReview(params) {
+export function listReview(params: { homeId: number } & QueryParams):PageResult<HousingReview> {
     return service({
         method: 'get',
-        url,
+        url: url + '/list',
         params
     })
 }
@@ -17,7 +18,7 @@ export function getReview(id) {
     })
 }
 
-export function addReview(data) {
+export function addReview(data:HousingReview):Result<string> {
     localStorage.setItem('execute', '评论房屋')
     return service({
         method: 'post',

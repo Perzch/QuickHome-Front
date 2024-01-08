@@ -1,8 +1,9 @@
 import service from "@/utils/service";
+import type {Order, OrderRequestData, PageResult, QueryParams, Result} from "@/types";
 
 const url = `/order`
 
-export function addOrder(data) {
+export function addOrder(data:OrderRequestData):Result<Order> {
     localStorage.setItem('execute', '新增订单')
     return service({
         method: 'post',
@@ -38,11 +39,18 @@ export function endOrder(data) {
     })
 }
 
-export function listOrder(params) {
+export function listOrder(params: {userId:number} & QueryParams):PageResult<Order> {
     return service({
         method: 'get',
         url: `${url}/list`,
         params
+    })
+}
+
+export function getOrder(id:number) {
+    return service({
+        method: 'get',
+        url: `${url}/${id}`
     })
 }
 
@@ -58,7 +66,7 @@ export function updateOrder(data) {
     localStorage.setItem('execute', '修改订单信息')
     return service({
         method: 'put',
-        url: `${url}/update`,
+        url: `${url}`,
         data
     })
 }
@@ -71,7 +79,7 @@ export function deleteOrder(id) {
     })
 }
 
-export function endOrderRefund(orderId) {
+export function endOrderRefund(orderId:number) {
     localStorage.setItem('execute', '结束订单退款')
     return service({
         method: 'post',
@@ -83,8 +91,15 @@ export function endOrderRefund(orderId) {
 export function scheduleCancellation(orderId) {
     localStorage.setItem('execute', '预定取消')
     return service({
-        method: 'get',
+        method: 'post',
         url: `${url}/scheduleCancellation`,
         params: { orderId }
+    })
+}
+
+export function getDynamicPassword(orderId:number):Result<string> {
+    return service({
+        method: 'get',
+        url: `${url}/password/${orderId}`
     })
 }

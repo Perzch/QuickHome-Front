@@ -22,25 +22,28 @@ export type Page<T> = {
     total: number
 }
 
-export type PageResult<T> = ResponseData<Page<T>>
+export type PageResult<T> = Promise<ResponseData<Page<T>>>
+
+export type Result<T> = Promise<ResponseData<T>>
 
 export type HomeSearchInfo = {
     beginDate: string,
     endDate: string,
     homeType?: string,
     device?: string,
+    roomCount?: number,
     minRent: number,
     maxRent?: number,
     address?: string,
     personCount?: number,
-    maxPeople: unknown,
+    maxPeople: number,
 } & QueryParams
 
 export type HomeSearchResult = {
     collectionCount: number,
     homeId: number,
     home: Home,
-    homeDeviceList: HomeDevice,
+    homeDeviceList: HomeDevice[],
     homeInformation: HomeInformation
 }
 
@@ -107,7 +110,7 @@ export interface Home {
     homeImageList: string[]
     homeId: number;//房屋id
     homeName: string;//房屋名称
-    homeState: number;//房屋状态
+    homeState: string;//房屋状态
     homeType: string;//房屋类型
 }
 
@@ -157,6 +160,13 @@ export type AttractionCollection = {
     collectionTime: Date
 }
 
+export type HotAttraction = {
+    attractionId: number
+    attraction: Attraction,
+    attractionImageList: any[],
+    collectionCount: number
+}
+
 export type Order = {
     orderId: number
     homeId: number
@@ -167,8 +177,9 @@ export type Order = {
     checkOutTime: Date
     orderPayment: number
     orderDeposit: number
-    orderState: number
+    orderState: string
     userId: number
+    home?: Home
 }
 
 export type UserTenant = {
@@ -210,6 +221,9 @@ export type Balance = {
 }
 
 export type HousingReview = {
+    secondHousingInfo?: HousingReview;
+    index?: number;
+    like?: boolean;
     housingReviewId: number
     comments: string
     userId: number
@@ -277,6 +291,12 @@ export type UserCoupon = {
     userId: number
 }
 
+
+export type CouponResult = {
+    coupon: Coupon
+    usersAndCoupons: UserCoupon
+}
+
 export type Log = {
     logId: number
     userPerformingId: number
@@ -294,12 +314,12 @@ export type PaymentPassword = {
 }
 
 export type Identity = {
-    IDCardRecordID: number
+    IDCardRecordID?: number
     IDCardName: string
     IDCardNumber: string
     IDCardPhoneNumber: string
     userId: number
-    inDateTime: Date
+    inDateTime?: Date
 }
 
 export type UpdateIdentityRequestData = {
