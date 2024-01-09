@@ -6,10 +6,10 @@ import {useRoute, useRouter} from "vue-router";
 import type {HomeSearchInfo, HomeSearchResult} from "@/types";
 import DeviceTag from "@components/DeviceTag.vue";
 import {Location} from "@element-plus/icons-vue";
+import {useSearchStore} from "@/stores/search";
 const route = useRoute()
 const router = useRouter()
 const list = ref<HomeSearchResult[]>()
-const total = ref(0)
 const loading = ref(false)
 const queryParams = ref<HomeSearchInfo>({
   ...route.query
@@ -21,6 +21,7 @@ const getList = async () => {
     path: '/search',
     query: queryParams.value
   })
+  localStorage.setItem('searchInfo', JSON.stringify(queryParams.value))
   const {data} = await listHome(queryParams.value)
   list.value = data
   loading.value = false

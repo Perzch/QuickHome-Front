@@ -95,7 +95,7 @@ const formValidate = (prop: string, isValid: boolean, message: string) => {
  */
 const sendCaptcha = async () => {
   await form.value.validateField('userInput')
-  captcha.value = (await getCaptcha(user.value.userInput,select.value)).data;
+  captcha.value = (await getCaptcha(user.value.userInput)).data;
 //   做读秒效果
   let time = 60
   const timer = setInterval(() => {
@@ -117,7 +117,7 @@ const register = async () => {
   await form.value.validateField(['userInput', 'captcha', 'userPwd', 'repeatPassword'])
   const tmp = {
     [select.value]: user.value.userInput,
-    userPwd: encrypt(user.value.userPwd)
+    userPwd: encrypt(user.value.userPwd || '')
   }
   const res =  await sendRegister(tmp)
   localStorage.setItem('userId',res.data.toString())
@@ -128,8 +128,9 @@ const register = async () => {
  * @description 登录
  */
 const login = async () => {
-  if(pass) {
+  if(pass.value) {
   //   免密登录
+    console.log('1')
     await form.value .validateField(['userInput', 'captcha'])
     const {data} = await loginByPhone({
       userPhone: user.value.userInput
@@ -137,16 +138,17 @@ const login = async () => {
     localStorage.setItem('token',data.token)
     localStorage.setItem('userId',data.userId)
   } else {
+    console.log(0)
     await form.value.validateField(['userInput', 'userPwd'])
     const tmp:User = {
       [select.value]: user.value.userInput,
-      userPwd: encrypt(user.value.userPwd)
+      userPwd: encrypt(user.value.userPwd || '')
     }
     const {data} = (await sendLogin(tmp))
     localStorage.setItem('token',data.token)
     localStorage.setItem('userId',data.userId.toString())
   }
-  const {data} = await getUserInfo(localStorage.getItem('userId'))
+  const {data} = await getUserInfo(localStorage.getItem('userId') as any)
   localStorage.setItem('userInfo', data)
   ElMessage.success('登录成功!')
 

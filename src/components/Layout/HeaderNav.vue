@@ -1,7 +1,9 @@
 <script lang='ts' setup>
 import {onBeforeUnmount, onMounted, ref} from "vue";
 import {useGlobalStore} from "@/stores";
-import type {UserInfo} from "@/types";
+import type {HomeSearchInfo, UserInfo} from "@/types";
+import dayjs from "dayjs";
+import {useRouter} from "vue-router";
 
 const headerTracker = ref(<HTMLElement>{})
 const headerRef = ref(<HTMLElement>{})
@@ -24,6 +26,25 @@ onBeforeUnmount(() => {
 const showDraw = () => {
     drawer.value = !drawer.value
 }
+
+
+const router = useRouter()
+const searchInfo = ref<HomeSearchInfo>({
+  beginDate: dayjs().format('YYYY-MM-DD'),
+  endDate: dayjs().add(1,'day').format('YYYY-MM-DD'),
+  minRent: 50,
+  personCount: 1,
+  roomCount: 1,
+  maxPeople: 1,
+  page: 1,
+  size: 100,
+})
+const toSearch = () => {
+  router.push({
+    path: '/search',
+    query: searchInfo.value
+  })
+}
 </script>
 <template>
     <div>
@@ -33,13 +54,13 @@ const showDraw = () => {
                 <router-link to="/" class="header-logo"><img src="../../assets/logo/text.png" alt="QuickHome"/></router-link>
             </div>
             <div class="flex gap-2 items-center">
-                <router-link to="/search" class="font-semibold p-1.5 hover:bg-primary hover:text-white rounded-md">
+                <div class="font-semibold p-1.5 hover:bg-primary hover:text-white rounded-md cursor-pointer" @click="toSearch">
                     <svg class="icon">
                         <use xlink:href="#iconfsearch"></use>
                     </svg>
-                </router-link>
+                </div>
                 <router-link to="/user" v-if="isLogin">
-                  <el-avatar :size="30" :src="userInfo.user?.userHeadImage">
+                  <el-avatar :size="30" :src="'/' + userInfo.user?.userHeadImage">
                     <template #default>
                       {{userInfo.user}}
                     </template>
@@ -85,13 +106,13 @@ const showDraw = () => {
 </template>
 <style lang='scss' scoped>
     header.header {
-        @apply flex justify-between items-center h-16 px-20 shadow-sm w-full z-40 fixed;
+        @apply flex justify-between items-center h-16 px-20 shadow-sm w-full z-40 fixed duration-300 transition-all;
         ul.router-list {
             @apply flex gap-10 items-center;
             @apply hidden md:flex;
             li {
                 a {
-                    @apply text-gray-800 text-base p-2 rounded-sm;
+                    @apply text-gray-800 text-base p-2 rounded-sm duration-300 transition-all;
                     @apply hover:text-white hover:bg-primary hover:shadow-inner;
                 }
             }
@@ -114,6 +135,7 @@ const showDraw = () => {
     }
     //登录按钮悬浮动画
     :deep(.login-button) {
+      @apply  duration-300 transition-all;
         span {
             @apply items-center;
         }
@@ -122,7 +144,7 @@ const showDraw = () => {
         }
     }
     :deep(.el-drawer__close-btn) {
-        @apply p-2 hover:bg-primary hover:text-white rounded-md;
+        @apply p-2 hover:bg-primary hover:text-white rounded-md duration-300 transition-all;
         i {
             @apply text-inherit;
         }

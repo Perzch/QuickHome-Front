@@ -124,7 +124,7 @@ const marks = {
         <div class="collection-list">
           <el-card v-for="item in attractionList" :key="item.aFavoriteRecordsId" shadow="hover" class="collection-list__item" @click="to(item)">
             <div class="collection-list__item__img">
-              <img :src="item.attraction.attractionImages?.split(',')[0]" alt="">
+              <img :src="'/' + item.attraction.attractionImages?.split(',')[0]" alt="">
             </div>
             <div class="collection-list__item__content">
               <h3 class="collection-list__item__content__name">{{item.attraction.attractionName}}</h3>
