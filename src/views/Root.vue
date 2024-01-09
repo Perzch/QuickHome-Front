@@ -1,10 +1,10 @@
 <script lang='ts' setup>
-import {markRaw, ref} from 'vue';
+import { ref} from 'vue';
 import { listAttractionByCollection } from '@/api/attraction/attraction'
 import { listHomeOrderByCollection } from "@/api/home/home";
 import SearchBar from "@/components/SearchBar.vue";
 import {useRouter} from "vue-router";
-import type {Attraction, HomeSearchInfo, HomeSearchResult, HotAttraction} from "@/types";
+import type { HomeSearchInfo, HomeSearchResult, HotAttraction} from "@/types";
 import dayjs from "dayjs";
 import {Location} from "@element-plus/icons-vue";
 const homeList = ref<HomeSearchResult[]>([])

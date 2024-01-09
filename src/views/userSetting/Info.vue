@@ -73,7 +73,7 @@ const confirmEdit = async () => {
         <span class="user-info__item__label">头像</span>
         <div class="user-info__item__main">
           <el-collapse-transition mode="out-in">
-            <el-avatar :src="userInfo.user.userHeadImage" size="large" v-if="!editAble"></el-avatar>
+            <el-avatar :src="'/' + userInfo.user.userHeadImage" size="large" v-if="!editAble"></el-avatar>
             <el-upload v-bind="uploadOptions" :file-list="fileList" :on-success="fileListChange" v-else>
               <el-icon><Plus/></el-icon>
             </el-upload>

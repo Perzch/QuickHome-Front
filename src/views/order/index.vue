@@ -101,8 +101,8 @@ const selectTraveller = (index:number) => {
 const confirm = async () => {
   // 确认订单
   const {data} = await addOrder({
-    checkInDate: searchInfo.value.beginDate,
-    checkOutDate: searchInfo.value.endDate,
+    checkInDate: dayjs(searchInfo.value.beginDate).format("YYYY-MM-DD"),
+    checkOutDate: dayjs(searchInfo.value.endDate).format("YYYY-MM-DD"),
     homeId: homeId.value as any,
     userId: userInfo.userId,
     userTenantList: travellerList.value.filter(item => !item.edit).map(item => ({
@@ -124,7 +124,7 @@ const pay = async (data:Order) => {
   try {
     await payOrder({
       orderId: data.orderId,
-      UACID: couponInfo.value.usersAndCoupons.UACID
+      UACID: couponInfo.value?.usersAndCoupons?.UACID
     })
   }catch (e) {
     ElMessage.error('支付失败')
@@ -136,10 +136,13 @@ const pay = async (data:Order) => {
     loading.value = false
     return await router.push('/')
   }
-  await useCoupon(couponInfo.value.usersAndCoupons.UACID)
+  if(couponInfo.value?.usersAndCoupons) {
+    await useCoupon(couponInfo.value.usersAndCoupons.UACID)
+  }
   loading.value = false
   ElMessage.success('支付成功')
-  router.push(`/order?orderId=${data.orderId}`)
+  await router.push(`/order?orderId=${data.orderId}`)
+  router.go(0)
 }
 
 
@@ -159,8 +162,12 @@ const listenMessage = async (e:WindowEventMap['message']) => {
     }
   } else if(e.data.pass) {
     loading.value = true
-    const data = await confirm()
-    await pay(data)
+    if(confirmAndPay.value) {
+      const data = await confirm()
+      await pay(data)
+    } else {
+      await pay(orderInfo.value)
+    }
     loading.value = false
   }
 }
@@ -178,16 +185,16 @@ const saveTraveller = (index: number, traveller:Identity) => {
 
 const valid = async (str:string) => {
   if(!travellerList.value.some(item => !item.edit)) {
-    return ElMessage.error('请至少填写并确认一个旅客信息')
+    return Promise.reject(ElMessage.error('请至少填写并确认一个旅客信息'))
   }
   // 如果旅客中有未满16周岁的,则需要填写监护人信息
-  if(travellerList.value.some(item => dayjs().diff(dayjs(item.IDCardNumber.substr(6,8)),'year') < 16)) {
-    if(!travellerList.value.some(item => item.guardianName && item.guardianPhoneNumber)) {
-      if(travellerList.value.length) {
-        return ElMessage.error('请填写未满16周岁旅客的监护人信息')
-      } else {
-        return ElMessage.error('入住人未满16周岁,需有监护人陪同')
-      }
+  if(travellerList.value.some(item => {
+    return (!item.edit) && dayjs().diff(dayjs(item.IDCardNumber.substring(6, 14)), 'year') < 16;
+  })) {
+    if(!travellerList.value.some(item => {
+      return (!item.edit) && dayjs().diff(dayjs(item.IDCardNumber.substring(6, 14)), 'year') > 16
+    })) {
+      return Promise.reject(ElMessage.error('请至少填写并确认一个监护人信息'))
     }
   }
   await ElMessageBox.confirm(str,'提示', {
@@ -198,15 +205,25 @@ const valid = async (str:string) => {
   return Promise.resolve()
 }
 
+
+const confirmAndPay = ref(false)
 const confirmAndPayOrder = async () => {
   await valid('是否确认订单并支付')
   window.open('/pay')
+  confirmAndPay.value = true
 }
 
 const confirmOrder = async () => {
   await valid('是否确认订单')
   const data = await confirm()
-  router.push(`/order?orderId=${data.orderId}&homeId=${homeId.value}`)
+  await router.push(`/order?orderId=${data.orderId}&homeId=${homeId.value}`)
+  router.go(0)
+}
+
+const handlePayOrder = async () => {
+  await valid('是否支付订单')
+  window.open('/pay')
+  confirmAndPay.value = false
 }
 
 
@@ -333,6 +350,7 @@ const checkoutHome = async () => {
             <li>订单创建30分钟内，且未获取房屋密码时免费退款。</li>
             <li>订单创建30分钟后，取消订单将扣除全部房费。</li>
             <li>确认订单后5分钟内未支付，订单自动取消。</li>
+            <li>未满16周岁需填写陪同人信息，若房屋为单人房间则不可预定。</li>
           </ol>
         </div>
       </div>
@@ -388,10 +406,11 @@ const checkoutHome = async () => {
       </div>
       <div class="order-execute" v-if="!orderInfo.orderId || orderInfo?.orderState !== '已退房'">
         <el-button @click="checkoutHome" type="success" v-if="homeInfo?.home.homeState === '已入住' && orderInfo.orderState === '已支付'">退房</el-button>
-        <el-button type="danger" @click="delOrder" v-if="['已取消','已结束'].includes(orderInfo.orderState)">删除订单</el-button>
+        <el-button type="danger" @click="delOrder" v-if="['已取消','已结束','已退款'].includes(orderInfo.orderState)">删除订单</el-button>
         <el-button @click="cancelOrder" v-if="['已入住','已支付'].includes(orderInfo.orderState)">取消订单</el-button>
-        <el-button type="primary" @click="confirmAndPayOrder" v-if="!orderInfo">确认并支付</el-button>
-        <el-button type="primary" @click="confirmOrder" v-if="!orderInfo">确认订单</el-button>
+        <el-button type="primary" @click="confirmAndPayOrder" v-if="!orderInfo.orderId">确认并支付</el-button>
+        <el-button type="primary" @click="confirmOrder" v-if="!orderInfo.orderId">确认订单</el-button>
+        <el-button type="primary" @click="handlePayOrder" v-if="orderInfo.orderId && orderInfo.orderState === '未支付'">支付订单</el-button>
       </div>
       <div class="dynamic-password" v-if="orderInfo.orderState === '已支付'">
         <p class="card__title">动态密码</p>

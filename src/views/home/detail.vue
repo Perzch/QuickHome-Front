@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import {useRoute, useRouter} from "vue-router";
 import {computed, ref, watch} from "vue";
-import {getHome} from "@/api/home/home";
+import {checkHome, getHome} from "@/api/home/home";
 import type {HomeSearchResult, HousingReview, QueryParams} from "@/types";
 import DeviceTag from "@/components/DeviceTag.vue";
 import {addReview, deleteReview, likeReview, listReview} from "@/api/review/home";
 import {useGlobalStore} from "@/stores";
+import {useStorage} from "@vueuse/core";
+import dayjs from "dayjs";
 
 const route = useRoute()
 const router = useRouter()
+const searchInfo = JSON.parse(localStorage.getItem('searchInfo') || '')
+const check = ref(false)
 const { userInfo } = useGlobalStore()
 const back = () => {
   ElMessage.error('未查询到该房屋')
@@ -20,13 +24,26 @@ if(!route.query.id) {
 const id = ref(route.query.id)
 const loading = ref(false)
 const form = ref<HomeSearchResult>({} as HomeSearchResult)
+// TODO 调用接口判断当前房屋能不能预定
+
 
 const getData = async () => {
   loading.value = true
+  try {
+    const checkRes = await checkHome({
+      homeId: id.value as any,
+      beginDate: dayjs(searchInfo.beginDate || undefined).format('YYYY-MM-DD'),
+      endDate: dayjs(searchInfo.endDate).format("YYYY-MM-DD") || dayjs().add(1,'day').format('YYYY-MM-DD'),
+    })
+    check.value = true
+  } catch (e) {
+    check.value = false
+  }
   const {data} = await getHome(id.value as any)
   form.value = data
 }
-getData()
+await getData()
+
 
 const to = () => {
   router.push({
@@ -137,7 +154,7 @@ const removeReview = async (item: HousingReview) => {
           <DeviceTag v-for="item in form.homeDeviceList" :device="item" />
         </p>
         <div class="hero__info__execute">
-          <el-button type="primary" size="large" @click="to" v-if="form.home?.homeState === '可入住'">立即预定</el-button>
+          <el-button type="primary" size="large" @click="to" v-if="check">立即预定</el-button>
         </div>
       </div>
       <div class="hero__img__list" :class="`hero__img__list--${form.home?.homeImageList.length}`">
