@@ -28,7 +28,7 @@ export function delCollection(data) {
     })
 }
 
-export function checkCollection(params) {
+export function checkCollection(params: { userId: number, homeId: number }) {
     return service({
         url: `${url}/check`,
         method: 'get',

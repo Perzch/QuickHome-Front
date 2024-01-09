@@ -3,7 +3,16 @@ import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {useGlobalStore} from "@/stores";
 import {getHome, updateHome} from "@/api/home/home";
-import type {Coupon, CouponResult, HomeSearchResult, Identity, Order, OrderRequestData, UserCoupon} from "@/types";
+import type {
+  Coupon,
+  CouponResult,
+  HomeSearchResult,
+  Identity,
+  Order,
+  OrderRequestData,
+  RCAMI, RCAMIResult,
+  UserCoupon
+} from "@/types";
 import DeviceTag from "@components/DeviceTag.vue";
 import {Location} from "@element-plus/icons-vue";
 import dayjs from "dayjs";
@@ -21,6 +30,7 @@ import {
 import {useCoupon} from "@/api/coupon/coupon";
 import {getIdentityByOrder} from "@/api/identity/identity";
 import {decrypt} from "@/utils/encryption";
+import {addRCAMI, listRCAMI} from "@/api/RCAMI/RCAMI";
 
 const route = useRoute()
 const homeId = ref(route.query.homeId)
@@ -86,6 +96,11 @@ const timeRange = computed({
   }
 })
 
+const disabledDate = (time:string): boolean => {
+  const day = dayjs(time)
+  // 当天前一天的日期禁用
+  return day.isBefore(dayjs().subtract(1,'day'),'day')
+}
 
 
 const selectCoupon = () => {
@@ -241,7 +256,7 @@ const getOrderInfo = async () => {
   loading.value = false
 }
 if(orderId.value) {
-  getOrderInfo()
+  await getOrderInfo()
 }
 
 const getPassword = async () => {
@@ -292,12 +307,56 @@ const checkoutHome = async () => {
 }
 
 const toHomeDetail = () => {
-  router.push({
-    path: '/home/detail',
-    query: {
-      id: homeId.value
-    }
-  })
+  window.open(`/home/detail?id=${homeId.value}`)
+}
+
+// 维修信息部分
+const rcamiInfo = ref<RCAMI>({
+  publisherId: userInfo.userId,
+  homeId: homeId.value as any,
+  orderId: orderInfo.value.orderId
+} as RCAMI)
+const rcamiList = ref<RCAMIResult[]>([])
+const rcamiRules = {
+  des: [
+    {required: true, message: '请输入详细描述'}
+  ],
+  RCAMIInformation: [
+    {required: true, message: '请输入维修信息'}
+  ]
+}
+const rcamiTotal = ref(0)
+const rcamiOpen = ref(false)
+const rcamiFormRef = ref()
+const getRepairInfo = async () => {
+  if(orderInfo.value.orderId) {
+    loading.value = true
+    const {data} = await listRCAMI({
+      orderId: orderInfo.value.orderId,
+      homeId: homeId.value as any,
+      page: 1,
+      size: 10
+    })
+    rcamiList.value = data.records
+    rcamiTotal.value = data.total
+    loading.value = false
+  }
+}
+getRepairInfo()
+
+const rcamiDialogOpen = () => {
+  rcamiOpen.value = true
+}
+const rcamiDialogClose = () => {
+  rcamiFormRef.value.resetFields()
+  rcamiOpen.value = false
+}
+
+const releaseRcami = async () => {
+  await rcamiFormRef.value.validate()
+  await addRCAMI(rcamiInfo.value)
+  ElMessage.success('报修成功')
+  await getRepairInfo()
 }
 </script>
 
@@ -337,6 +396,7 @@ const toHomeDetail = () => {
             type="daterange"
             range-separator="-"
             value-format="YYYY-MM-DD"
+            :disabled-date="disabledDate"
             start-placeholder="开始日期"
             end-placeholder="结束日期" v-else/>
         </div>
@@ -414,7 +474,7 @@ const toHomeDetail = () => {
         </div>
       </div>
       <div class="order-execute" v-if="!orderInfo.orderId || orderInfo?.orderState !== '已退房'">
-        <el-button @click="checkoutHome" type="success" v-if="homeInfo?.home.homeState === '已入住' && orderInfo.orderState === '已支付'">退房</el-button>
+        <el-button @click="checkoutHome" type="success" v-if="(homeInfo?.home.homeState === '已入住' && orderInfo.orderState === '已支付') || Number(decrypt(orderInfo.dynamicDoorPassword))">退房</el-button>
         <el-button type="danger" @click="delOrder" v-if="['已取消','已结束','已退款'].includes(orderInfo.orderState)">删除订单</el-button>
         <el-button @click="cancelOrder" v-if="['已入住','已支付'].includes(orderInfo.orderState)">取消订单</el-button>
         <el-button type="primary" @click="confirmAndPayOrder" v-if="!orderInfo.orderId">确认并支付</el-button>
@@ -430,7 +490,54 @@ const toHomeDetail = () => {
           <el-button @click="getPassword">获取密码</el-button>
         </div>
       </div>
+      <div class="rcami-info" v-if="orderInfo.orderId">
+        <p class="card__title">维修信息</p>
+        <transition-group name="fade">
+          <div class="rcami-info__item" v-for="item in rcamiList" :key="item.rcami.workItemId" v-if="rcamiList.length">
+            <div class="rcami-info__item__info">
+              <el-popover
+                  placement="top-start"
+                  :width="200"
+                  title="详细信息"
+                  trigger="hover"
+                  :content="item.rcami.des"
+              >
+                <template #reference>
+                  {{item.rcami.RCAMIInformation}}
+                </template>
+              </el-popover>
+            </div>
+            <div class="rcami-info__item__create-time">
+              <div class="rcami-info__item__create-time__title">报修时间:</div>
+              <div class="rcami-info__item__create-time__text">{{item.rcami.informationCreatTime}}</div>
+            </div>
+            <div class="rcami-info__item__state">
+              <el-tag :type="item.rcami.completion ? 'success' : 'danger'">
+                {{item.rcami.completion || '未完成'}}
+              </el-tag>
+            </div>
+          </div>
+          <div class="rcami-info--empty" v-else>暂无数据</div>
+        </transition-group>
+        <div class="rcami-info__execute">
+          <el-button @click="rcamiDialogOpen" v-if="orderInfo.orderState ==='已支付'">报修</el-button>
+        </div>
+      </div>
     </div>
+    <el-dialog v-model="rcamiOpen" title="报修" width="50%" :before-close="rcamiDialogClose">
+      <el-form :model="rcamiInfo" ref="rcamiFormRef" :rules="rcamiRules" label-position="top">
+        <el-form-item label="维修信息" prop="RCAMIInformation">
+          <el-input v-model="rcamiInfo.RCAMIInformation" placeholder="请输入维修信息"></el-input>
+        </el-form-item>
+        <el-form-item label="详细描述" prop="des">
+          <el-input type="textarea" :rows="2" v-model="rcamiInfo.des" placeholder="请输入详细描述"></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="rcamiDialogClose">取消</el-button>
+        <el-button type="primary" @click="releaseRcami">确定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -493,12 +600,39 @@ const toHomeDetail = () => {
       @apply flex justify-end p-2 mb-2 rounded-md border shadow-sm text-white;
     }
     .dynamic-password {
-      @apply p-2 rounded-md border shadow-sm bg-primary text-white;
+      @apply p-2 rounded-md border shadow-sm bg-primary text-white mb-2;
       &__text {
         @apply flex items-center text-white text-xl;
       }
       &__execute {
         @apply flex justify-end;
+      }
+    }
+    .rcami-info {
+      @apply p-2 rounded-md border shadow-sm;
+      .rcami-info__item {
+        @apply flex justify-between items-center mb-2 gap-2;
+        &__info {
+          @apply flex-2;
+        }
+        &__create-time {
+          @apply flex-3;
+          &__title {
+            @apply text-gray-500 text-sm mr-2;
+          }
+          &__text {
+            @apply text-gray-500 text-sm;
+          }
+        }
+        &__state {
+          @apply flex items-center flex-1;
+        }
+      }
+      &__execute {
+        @apply flex justify-end;
+      }
+      &--empty {
+        @apply text-center text-gray-500;
       }
     }
   }

@@ -8,6 +8,7 @@ import {addReview, deleteReview, likeReview, listReview} from "@/api/review/home
 import {useGlobalStore} from "@/stores";
 import {useStorage} from "@vueuse/core";
 import dayjs from "dayjs";
+import {addCollection, checkCollection, delCollection} from "@/api/home/collection";
 
 const route = useRoute()
 const router = useRouter()
@@ -133,6 +134,38 @@ const removeReview = async (item: HousingReview) => {
   await getList()
   ElMessage.success('删除成功')
 }
+
+const collection = ref(false)
+const firstCheckCollection = async () => {
+  if(!userInfo.userId) {
+    return
+  }
+  const {data} = await checkCollection({
+    userId: userInfo.userId,
+    homeId: id.value as any
+  })
+  collection.value = data
+}
+firstCheckCollection()
+const collectionHome = async () => {
+  if(!userInfo.userId) {
+    return ElMessage.warning('请先登录')
+  }
+  if(collection.value) {
+    await delCollection({
+      userId: userInfo.userId,
+      homeId: id.value as any
+    })
+    collection.value = false
+    return ElMessage.success('取消收藏成功')
+  }
+  await addCollection({
+    userId: userInfo.userId,
+    homeId: id.value as any
+  })
+  collection.value = true
+  ElMessage.success('收藏成功')
+}
 </script>
 
 <template>
@@ -154,6 +187,7 @@ const removeReview = async (item: HousingReview) => {
           <DeviceTag v-for="item in form.homeDeviceList" :device="item" />
         </p>
         <div class="hero__info__execute">
+          <el-button :type="collection ? 'primary' : ''" icon="StarFilled" circle @click="collectionHome"></el-button>
           <el-button type="primary" size="large" @click="to" v-if="check">立即预定</el-button>
         </div>
       </div>
@@ -265,11 +299,11 @@ const removeReview = async (item: HousingReview) => {
     .hero__img__list {
       @apply grid grid-cols-4 grid-rows-4 col-span-1 gap-4 max-h-[85dvh];
       &__item {
-        @apply rounded-md overflow-hidden hover:shadow-lg hover:scale-105 duration-300 transition-all;
+        @apply rounded-md overflow-hidden hover:shadow-lg duration-300 transition-all;
       }
       &__item {
         img {
-          @apply w-full h-full object-cover;
+          @apply w-full h-full object-cover hover:scale-105;
         }
         &:nth-child(1) {
           @apply col-span-3 row-span-2 row-start-3;

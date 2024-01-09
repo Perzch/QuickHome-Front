@@ -212,6 +212,13 @@ export type RCAMI = {
     homeId: number
 }
 
+export type RCAMIResult = {
+    home: Home,
+    order: Order,
+    rcami: RCAMI
+    user: User
+}
+
 export type Balance = {
     bid: number,
     userId: number,

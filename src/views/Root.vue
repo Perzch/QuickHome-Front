@@ -79,6 +79,21 @@ const toHomeDetail = (item:HomeSearchResult) => {
         </div>
       </div>
     </div>
+    <div class="attraction-info" v-if="attractionList.length">
+      <div class="attraction-list__title">热门景点</div>
+      <div class="attraction-list">
+        <div class="attraction-list__item" v-for="item in attractionList">
+          <div class="attraction-list__item__img" >
+              <img :src="'/' + item.attraction.attractionImageList?.[0]" alt="">
+          </div>
+          <div class="attraction-list__item__info">
+            <div class="attraction-list__item__info__name">{{item.attraction.attractionName}}</div>
+            <div class="attraction-list__item__info__detail" v-html="item.attraction.attractionInformation">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <style lang='scss' scoped>
@@ -121,7 +136,7 @@ const toHomeDetail = (item:HomeSearchResult) => {
 }
 
 .home-list {
-  .home-list__item:nth-child(even) {
+  .home-list__item:nth-child(odd) {
     background-image: none;
     direction: rtl;
   }
@@ -131,7 +146,7 @@ const toHomeDetail = (item:HomeSearchResult) => {
     .home-list__item__img {
       @apply w-full h-full col-span-2 hover:shadow-md rounded-2xl overflow-hidden;
       img {
-        @apply w-full h-full object-cover rounded-2xl;
+        @apply w-full h-full object-cover rounded-2xl hover:scale-105;
       }
     }
     .home-list__item__info {
@@ -162,6 +177,35 @@ const toHomeDetail = (item:HomeSearchResult) => {
 
         .detail-icon {
           @apply flex items-center p-1 bg-success rounded-md text-white;
+        }
+      }
+    }
+  }
+}
+
+.attraction-info {
+  @apply py-10 bg-gradient-to-b from-white to-gray-100 bg-opacity-30 bg-fixed bg-center;
+  background-image: url("../assets/19693100.jpg");
+  .attraction-list__title {
+    @apply pl-20 my-4 text-3xl font-semibold underline decoration-8 decoration-success underline-offset-[-2px] text-white;
+  }
+  .attraction-list {
+    @apply grid grid-cols-3 gap-10 px-20;
+    .attraction-list__item {
+      @apply flex flex-col gap-4 rounded-md shadow-md bg-white p-4;
+      .attraction-list__item__img {
+        @apply w-full h-60 rounded-md overflow-hidden;
+        img {
+          @apply w-full h-full object-cover;
+        }
+      }
+      .attraction-list__item__info {
+        @apply flex flex-col gap-2;
+        &__name {
+          @apply text-2xl font-semibold;
+        }
+        &__detail {
+          @apply text-gray-500;
         }
       }
     }

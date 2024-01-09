@@ -20,7 +20,7 @@
   overflow: hidden;
 }
 :root,html,body,div,span,p,i,img,section,main,header,footer,form,input,button,select,a,nav,article,aside,h1,h2,h3,h4,h5,h6 {
-  //@apply duration-300 ease-in-out transition-all;
+  @apply transition-all;
 }
 :root {
   font-family: 'XiHei','宋体','Oblique','微软雅黑', sans-serif;

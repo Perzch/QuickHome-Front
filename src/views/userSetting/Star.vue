@@ -104,20 +104,22 @@ const marks = {
     <el-tabs v-model="tab" class="demo-tabs">
       <el-tab-pane label="房屋" :name="0">
         <div class="collection-list">
-          <el-card v-for="item in homeList" :key="item.hFavoriteRecordsId" shadow="hover" class="collection-list__item" @click="to(item)">
-            <div class="collection-list__item__img">
-              <img :src="'/' + item.home.homeImageList[0]" alt="">
-            </div>
-            <div class="collection-list__item__content">
-              <h3 class="collection-list__item__content__name">{{item.home.homeName}}</h3>
-              <p class="collection-list__item__content__type">{{item.home.homeType}}</p>
-              <p class="collection-list__item__content__address"><el-icon><Location/></el-icon>{{item.home.homeAddress}}</p>
-              <p class="collection-list__item__content__dayrent">￥{{item.home.homeDayRent}}元/晚</p>
-              <div class="flex justify-end">
-                <el-button icon="delete" type="danger" circle @click="remove(item.homeId)"></el-button>
+          <transition-group>
+            <el-card v-for="item in homeList" :key="item.hFavoriteRecordsId" shadow="hover" class="collection-list__item" @click="to(item)">
+              <div class="collection-list__item__img">
+                <img :src="'/' + item.home.homeImageList[0]" alt="">
               </div>
-            </div>
-          </el-card>
+              <div class="collection-list__item__content">
+                <h3 class="collection-list__item__content__name">{{item.home.homeName}}</h3>
+                <p class="collection-list__item__content__type">{{item.home.homeType}}</p>
+                <p class="collection-list__item__content__address"><el-icon><Location/></el-icon>{{item.home.homeAddress}}</p>
+                <p class="collection-list__item__content__dayrent">￥{{item.home.homeDayRent}}元/晚</p>
+                <div class="flex justify-end">
+                  <el-button icon="delete" type="danger" circle @click.stop="remove(item.homeId)"></el-button>
+                </div>
+              </div>
+            </el-card>
+          </transition-group>
         </div>
       </el-tab-pane>
 <!--      <el-tab-pane label="景点" :name="1">-->
@@ -166,9 +168,9 @@ const marks = {
   .collection-list__item {
     @apply flex flex-col gap-2 rounded-md cursor-pointer p-0;
     .collection-list__item__img {
-      @apply w-full;
+      @apply w-full overflow-hidden;
       img {
-        @apply w-full aspect-video;
+        @apply w-full aspect-video hover:scale-110;
       }
     }
     .collection-list__item__content {

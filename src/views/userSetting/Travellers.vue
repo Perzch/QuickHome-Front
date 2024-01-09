@@ -90,11 +90,13 @@ const handleAdd = () => {
         <h3>行使隐私权，管理数据使用方式。</h3>
       </div>
       <div>
-        <el-button type="primary" icon="plus" @click="handleAdd">添加</el-button>
+        <el-button type="primary" icon="plus" @click="handleAdd" v-if="!select">添加</el-button>
       </div>
     </div>
     <div class="card-list">
-      <TravellerCard :item="item" :select="select" v-model:edit="item.edit" @deleteCard="deleteCard" @save="save" v-for="item in list" :key="item.IDCardRecordID"/>
+      <transition-group name="fade">
+        <TravellerCard :item="item" :select="select" v-model:edit="item.edit" @deleteCard="deleteCard" @save="save" v-for="(item,index) in list" :key="item.IDCardRecordID || index"/>
+      </transition-group>
     </div>
     <div class="flex justify-end my-4">
       <el-pagination
