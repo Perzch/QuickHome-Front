@@ -141,7 +141,7 @@ onUnmounted(() => {
 .order-list {
   @apply flex flex-col gap-4;
   &__item {
-    @apply grid-rows-4 grid border rounded-md divide-y divide-gray-400 shadow-sm;
+    @apply grid-rows-4 grid border border-gray-300 rounded-md divide-y divide-gray-400 shadow-sm;
     &__title {
       @apply text-sm text-gray-500;
     }

@@ -120,26 +120,26 @@ const marks = {
           </el-card>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="景点" :name="1">
-        <div class="collection-list">
-          <el-card v-for="item in attractionList" :key="item.aFavoriteRecordsId" shadow="hover" class="collection-list__item" @click="to(item)">
-            <div class="collection-list__item__img">
-              <img :src="'/' + item.attraction.attractionImages?.split(',')[0]" alt="">
-            </div>
-            <div class="collection-list__item__content">
-              <h3 class="collection-list__item__content__name">{{item.attraction.attractionName}}</h3>
-              <p class="collection-list__item__content__info" v-html="item.attraction.attractionInformation"></p>
-              <p class="collection-list__item__content__time__label">开放时间:</p>
-              <p class="collection-list__item__content__time">
-                <el-slider :model-value="timeComputeNumber(item.attraction.openingTime.toString(),item.attraction.closingTime.toString())" range :marks="marks" :step=".5" :max="24" :min="0" :format-tooltip="sliderFormatTooltip"/>
-              </p>
-            </div>
-            <div class="flex justify-end">
-              <el-button icon="delete" type="danger" circle @click="remove(item.attractionId)"></el-button>
-            </div>
-          </el-card>
-        </div>
-      </el-tab-pane>
+<!--      <el-tab-pane label="景点" :name="1">-->
+<!--        <div class="collection-list">-->
+<!--          <el-card v-for="item in attractionList" :key="item.aFavoriteRecordsId" shadow="hover" class="collection-list__item" @click="to(item)">-->
+<!--            <div class="collection-list__item__img">-->
+<!--              <img :src="'/' + item.attraction.attractionImages?.split(',')[0]" alt="">-->
+<!--            </div>-->
+<!--            <div class="collection-list__item__content">-->
+<!--              <h3 class="collection-list__item__content__name">{{item.attraction.attractionName}}</h3>-->
+<!--              <p class="collection-list__item__content__info" v-html="item.attraction.attractionInformation"></p>-->
+<!--              <p class="collection-list__item__content__time__label">开放时间:</p>-->
+<!--              <p class="collection-list__item__content__time">-->
+<!--                <el-slider :model-value="timeComputeNumber(item.attraction.openingTime.toString(),item.attraction.closingTime.toString())" range :marks="marks" :step=".5" :max="24" :min="0" :format-tooltip="sliderFormatTooltip"/>-->
+<!--              </p>-->
+<!--            </div>-->
+<!--            <div class="flex justify-end">-->
+<!--              <el-button icon="delete" type="danger" circle @click="remove(item.attractionId)"></el-button>-->
+<!--            </div>-->
+<!--          </el-card>-->
+<!--        </div>-->
+<!--      </el-tab-pane>-->
     </el-tabs>
     <div class="flex justify-end my-4">
       <el-pagination

@@ -20,8 +20,7 @@ import {
 } from "@/api/order/order";
 import {useCoupon} from "@/api/coupon/coupon";
 import {getIdentityByOrder} from "@/api/identity/identity";
-import {decrypt} from "../../utils/encryption";
-import {ElMessage} from "element-plus";
+import {decrypt} from "@/utils/encryption";
 
 const route = useRoute()
 const homeId = ref(route.query.homeId)
@@ -120,6 +119,7 @@ const confirm = async () => {
 }
 
 const pay = async (data:Order) => {
+  console.log(data)
   //   支付订单
   try {
     await payOrder({
@@ -141,7 +141,7 @@ const pay = async (data:Order) => {
   }
   loading.value = false
   ElMessage.success('支付成功')
-  await router.push(`/order?orderId=${data.orderId}`)
+  await router.push(`/order?orderId=${data.orderId}&homeId=${homeId.value}`)
   router.go(0)
 }
 
@@ -290,6 +290,15 @@ const checkoutHome = async () => {
     ElMessage.error('未到退房时间,请取消订单')
   }
 }
+
+const toHomeDetail = () => {
+  router.push({
+    path: '/home/detail',
+    query: {
+      id: homeId.value
+    }
+  })
+}
 </script>
 
 <template>
@@ -358,7 +367,7 @@ const checkoutHome = async () => {
     <div class="detail">
       <div class="home-detail card">
         <p class="card__title">房屋详情</p>
-        <div class="home-detail__name">{{homeInfo.home?.homeName}}</div>
+        <div class="home-detail__name" @click="toHomeDetail">{{homeInfo.home?.homeName}}</div>
         <div class="home-detail__address"><el-icon><Location/></el-icon>{{homeInfo.home?.homeAddress}}</div>
         <div class="home-detail__day-rent">￥{{homeInfo.home?.homeDayRent}}元/天</div>
         <div class="home-detail__deposit">押金:￥{{homeInfo.homeInformation?.homeDeposit}}</div>
@@ -429,7 +438,7 @@ const checkoutHome = async () => {
 .app-container {
   @apply px-20 min-h-[100dvh] grid grid-cols-3 gap-4 pt-20 relative;
   .detail {
-    @apply col-span-1 sticky right-0 top-20;
+    @apply col-span-1 sticky right-0 top-20 h-fit;
     .card {
       @apply p-2 mb-2 rounded-md border w-full shadow-sm;
       &__title {
@@ -438,7 +447,7 @@ const checkoutHome = async () => {
     }
     .home-detail {
       &__name {
-        @apply text-xl font-semibold mb-2;
+        @apply text-xl font-semibold mb-2 cursor-pointer hover:underline hover:text-primary;
       }
       &__address {
         @apply flex items-center mb-2 text-gray-500 text-sm;
