@@ -79,7 +79,7 @@ onUnmounted(() => {
       </div>
       <div class="wallet__execute">
         <el-button type="primary" size="large" @click="dialogOpen(true)">充值</el-button>
-        <el-button size="large" @click="dialogOpen(false)">提现</el-button>
+        <el-button size="large" @click="dialogOpen(false)" :disabled="form.userBalance <=0">提现</el-button>
       </div>
     </div>
   </div>
