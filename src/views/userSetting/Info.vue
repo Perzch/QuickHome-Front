@@ -107,23 +107,26 @@ const confirmEdit = async () => {
       <div class="user-info__item user-info__email">
         <span class="user-info__item__label">邮箱</span>
         <div class="user-info__item__main">
-          <el-collapse-transition mode="out-in">
-            <el-form-item prop="user.userEmail" v-if="editAble">
-              <el-input type="email" v-model="form.user.userEmail" placeholder="请输入邮箱"></el-input>
-            </el-form-item>
-            <span class="user-info__item__text" v-else>{{userInfo.user?.userEmail}}</span>
-          </el-collapse-transition>
+<!--          <el-collapse-transition mode="out-in">-->
+<!--            <el-form-item prop="user.userEmail" v-if="editAble">-->
+<!--              <el-input type="email" v-model="form.user.userEmail" placeholder="请输入邮箱" disabled></el-input>-->
+<!--            </el-form-item>-->
+<!--            <span class="user-info__item__text" v-else>{{userInfo.user?.userEmail}}</span>-->
+<!--          </el-collapse-transition>-->
+          <span class="user-info__item__text">{{userInfo.user?.userEmail}}</span>
         </div>
       </div>
       <div class="user-info__item user-info__phone">
         <span class="user-info__item__label">电话</span>
         <div class="user-info__item__main">
-          <el-collapse-transition mode="out-in">
-            <el-form-item prop="user.userPhone" v-if="editAble">
-              <el-input type="tel" v-model="form.user.userPhone" placeholder="请输入电话"></el-input>
-            </el-form-item>
-            <span class="user-info__item__text" v-else="!editAble">{{userInfo.user?.userPhone}}</span>
-          </el-collapse-transition>
+<!--          <el-collapse-transition mode="out-in">-->
+<!--            <el-form-item prop="user.userPhone" v-if="editAble">-->
+<!--              <el-input type="tel" v-model="form.user.userPhone" placeholder="请输入电话" disabled></el-input>-->
+<!--            </el-form-item>-->
+<!--            <span class="user-info__item__text" v-else="!editAble">{{userInfo.user?.userPhone}}</span>-->
+<!--          </el-collapse-transition>-->
+<!--        </div>-->
+          <span class="user-info__item__text">{{userInfo.user?.userPhone}}</span>
         </div>
       </div>
       <div class="user-info__item user-info__gender">

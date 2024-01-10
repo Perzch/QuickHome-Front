@@ -262,7 +262,7 @@ if(orderId.value) {
 }
 
 const getPassword = async () => {
-  if(dayjs(orderInfo.value.checkInTime).isBefore(dayjs().subtract(1,'day').add(14,'hour'))) {
+  if(dayjs(dayjs().format('YYYY-MM-DD')).add(14,'hour').isBefore(dayjs(orderInfo.value.checkInTime))) {
     return ElMessage.error('未到获取密码时间')
   }
   if(homeInfo.value?.home.homeState === '可入住') {
