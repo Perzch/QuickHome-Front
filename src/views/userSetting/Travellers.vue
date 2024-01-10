@@ -32,7 +32,10 @@ const deleteCard =async (item:Identity) => {
     type: "warning"
   })
   loading.value = true
-  await deleteIdentity(item)
+  await deleteIdentity({
+    ...item,
+    userId: userInfo.userId
+  })
   await getList()
   loading.value = false
   ElMessage.success('删除成功')

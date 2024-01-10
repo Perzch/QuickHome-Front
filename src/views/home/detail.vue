@@ -198,40 +198,43 @@ const collectionHome = async () => {
       </div>
     </div>
     <el-divider></el-divider>
-    <div class="comment__list" v-if="list.length">
+    <div class="comment__list">
       <div class="comment__list__header">
         <p class="comment__list__header__title">评论</p>
         <div class="comment__list__header__execute">
           <el-button type="primary" @click="dialogOpen(null,'发表评论')">发表</el-button>
         </div>
       </div>
-      <div class="comment__list__item" v-for="(item) in list" :key="item.housingReviewId">
-        <div class="comment__list__item__title">
-          <div class="comment__list__item__number">{{item.index}}楼</div>
-          <div class="comment__list__item__rate">
-            <el-rate v-model="item.housingReviewRating" disabled/>
-          </div>
-        </div>
-        <div class="comment__list__item__content">
-            <div class="comment__list__item__content__text">{{item.comments}}</div>
-          <div class="comment__list__item__content__reply" v-if="item.secondHousingInfo">
-            <span class="comment__list__item__content__reply__placeholder">回复{{item.secondHousingInfo?.index}}楼:</span>
-            <div class="comment__list__item__content__reply__box">
-              <div class="comment__list__item__content__reply__box__text">{{item.secondHousingInfo?.comments}}</div>
+      <el-collapse-transition>
+        <div class="comment__list__item" v-if="list.length" v-for="(item) in list" :key="item.housingReviewId">
+          <div class="comment__list__item__title">
+            <div class="comment__list__item__number">{{item.index}}楼</div>
+            <div class="comment__list__item__rate">
+              <el-rate v-model="item.housingReviewRating" disabled/>
             </div>
           </div>
-          <div class="comment__list__item__content__like">
-            <el-button type="danger" @click="removeReview(item)" v-if="item.userId === userInfo.userId">删除</el-button>
-            <el-button type="primary" @click="dialogOpen(item,'回复评论')">回复</el-button>
-            <el-button :type="item.like ?'primary' : ''" @click="like(item)" v-debounce>
-              <svg class="icon" aria-hidden="true">
-                <use xlink:href="#iconflike"></use>
-              </svg>
-              {{item.homeLikeCount}}
-            </el-button>
+          <div class="comment__list__item__content">
+              <div class="comment__list__item__content__text">{{item.comments}}</div>
+            <div class="comment__list__item__content__reply" v-if="item.secondHousingInfo">
+              <span class="comment__list__item__content__reply__placeholder">回复{{item.secondHousingInfo?.index}}楼:</span>
+              <div class="comment__list__item__content__reply__box">
+                <div class="comment__list__item__content__reply__box__text">{{item.secondHousingInfo?.comments}}</div>
+              </div>
+            </div>
+            <div class="comment__list__item__content__like">
+              <el-button type="danger" @click="removeReview(item)" v-if="item.userId === userInfo.userId">删除</el-button>
+              <el-button type="primary" @click="dialogOpen(item,'回复评论')">回复</el-button>
+              <el-button :type="item.like ?'primary' : ''" @click="like(item)" v-debounce>
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#iconflike"></use>
+                </svg>
+                {{item.homeLikeCount}}
+              </el-button>
+            </div>
           </div>
         </div>
-      </div>
+        <div class="comment__list__item--empty" v-else>暂无评论</div>
+      </el-collapse-transition>
       <div class="pagination">
         <el-pagination
             v-model:current-page="queryParams.page"
@@ -412,6 +415,9 @@ const collectionHome = async () => {
           }
         }
       }
+    }
+    &__item--empty {
+      @apply flex justify-center items-center h-40;
     }
   }
   .pagination {

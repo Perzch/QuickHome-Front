@@ -197,12 +197,24 @@ onUnmounted(() => {
 })
 
 const saveTraveller = (index: number, traveller:Identity) => {
-  Object.assign(travellerList.value[index], traveller)
+  travellerList.value[index] = {
+    ...travellerList.value[index],
+    ...traveller,
+  }
+  // Object.assign(item, traveller)
 }
 
 const valid = async (str:string) => {
   if(!travellerList.value.some(item => !item.edit)) {
     return Promise.reject(ElMessage.error('请至少填写并确认一个旅客信息'))
+  }
+  // 如果旅客信息有重复的,则需要重新填写
+  if(travellerList.value.some((item,index) => {
+    return (!item.edit) && travellerList.value.findIndex((item2,index2) => {
+      return (!item2.edit) && index !== index2 && item.IDCardNumber === item2.IDCardNumber
+    }) !== -1
+  })) {
+    return Promise.reject(ElMessage.error('旅客信息有重复'))
   }
   // 如果旅客中有未满16周岁的,则需要填写监护人信息
   if(travellerList.value.some(item => {
