@@ -7,14 +7,25 @@ import {useRouter} from "vue-router";
 import type { HomeSearchInfo, HomeSearchResult, HotAttraction} from "@/types";
 import dayjs from "dayjs";
 import {Location} from "@element-plus/icons-vue";
+import {listNotification} from "@/api/manager/notification";
 const homeList = ref<HomeSearchResult[]>([])
 const attractionList = ref<HotAttraction[]>([])
 const loading = ref(false)
 const router = useRouter()
-
+const notification = ref<string>('')
 
 const getList = async () => {
   loading.value = true
+  const {data} = await listNotification({
+    page: 1,
+    size: 1
+  })
+  notification.value = data?.records?.[0]?.notificationContent
+  ElMessage({
+    dangerouslyUseHTMLString: true,
+    message: notification.value,
+    type: "info"
+  })
   const [homeRes,attractionRes] = await Promise.all([listHomeOrderByCollection(), listAttractionByCollection()])
   homeList.value = homeRes.data
   attractionList.value = attractionRes.data

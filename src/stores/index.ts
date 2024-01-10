@@ -25,12 +25,13 @@ export const useGlobalStore = defineStore('global',() => {
             return Promise.resolve(data)
         }
     }
-    const logout = () => {
+    const logout = async () => {
         localStorage.setItem('userId', '')
         localStorage.setItem('token', '')
         localStorage.removeItem('searchInfo')
         localStorage.removeItem('userInfo')
-        router.push('/auth/1')
+        await router.push('/auth/1')
+        router.go(0)
     }
     return {
         logout,
