@@ -41,7 +41,8 @@ const handleSearch = () => {
 </script>
 <template>
     <el-form class="form-box" :class="{ 'all':all }" label-width="auto" label-position="top" size="large">
-        <el-form-item class="address" label="目的地" label-width="100%">
+        <el-form-item class="address" label-width="100%">
+          <template #label v-if="all">目的地</template>
             <el-input v-model="form.address" placeholder="目的地" clearable />
         </el-form-item>
         <el-form-item class="time-range" v-if="all">

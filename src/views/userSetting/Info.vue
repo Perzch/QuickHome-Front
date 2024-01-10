@@ -5,9 +5,12 @@ import type {ResponseData, UserInfo} from "@/types";
 import {updateUser} from "@/api/user/user";
 import {updateUserInfo} from "@/api/user/info";
 import dayjs from "dayjs";
+import {useRouter} from "vue-router";
 
 const { userInfo,getUserInfo } = useGlobalStore()
+getUserInfo()
 const loading = ref(false)
+const router = useRouter()
 const rules = {
   'user.userName': [
     { required: true ,message: '姓名不能为空' }
@@ -55,14 +58,13 @@ const confirmEdit = async () => {
   await updateUser(form.value.user)
   await updateUserInfo(form.value.userInformation)
   ElMessage.success('修改成功!')
-  loading.value = false
-  editAble.value = false
-  getUserInfo()
+  await getUserInfo()
+  router.go(0)
 }
 </script>
 
 <template>
-  <div class="wrap" v-loading="loading">
+  <div class="wrap" v-loading.fullscreen="loading">
     <div class="user-info__header">
       <div class="title">
         <h1>个人信息</h1>
@@ -88,7 +90,7 @@ const confirmEdit = async () => {
       <div class="user-info__item user-info__account">
         <span class="user-info__item__label">账号</span>
         <div class="user-info__item__main">
-          <span class="user-info__item__text">{{userInfo.user.userAccount}}</span>
+          <span class="user-info__item__text">{{userInfo.user?.userAccount}}</span>
         </div>
       </div>
       <div class="user-info__item user-info__name">
@@ -98,7 +100,7 @@ const confirmEdit = async () => {
             <el-form-item prop="user.userName" v-if="editAble">
               <el-input v-model="form.user.userName" placeholder="请输入姓名"></el-input>
             </el-form-item>
-            <span class="user-info__item__text" v-else>{{userInfo.user.userName}}</span>
+            <span class="user-info__item__text" v-else>{{userInfo.user?.userName}}</span>
           </el-collapse-transition>
         </div>
       </div>
@@ -109,7 +111,7 @@ const confirmEdit = async () => {
             <el-form-item prop="user.userEmail" v-if="editAble">
               <el-input type="email" v-model="form.user.userEmail" placeholder="请输入邮箱"></el-input>
             </el-form-item>
-            <span class="user-info__item__text" v-else>{{userInfo.user.userEmail}}</span>
+            <span class="user-info__item__text" v-else>{{userInfo.user?.userEmail}}</span>
           </el-collapse-transition>
         </div>
       </div>
@@ -120,7 +122,7 @@ const confirmEdit = async () => {
             <el-form-item prop="user.userPhone" v-if="editAble">
               <el-input type="tel" v-model="form.user.userPhone" placeholder="请输入电话"></el-input>
             </el-form-item>
-            <span class="user-info__item__text" v-else="!editAble">{{userInfo.user.userPhone}}</span>
+            <span class="user-info__item__text" v-else="!editAble">{{userInfo.user?.userPhone}}</span>
           </el-collapse-transition>
         </div>
       </div>

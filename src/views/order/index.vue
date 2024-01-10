@@ -3,6 +3,7 @@ import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {useGlobalStore} from "@/stores";
 import {getHome, updateHome} from "@/api/home/home";
+import OrderInfoCard from "@components/OrderInfoCard.vue";
 import type {
   CouponResult,
   HomeSearchResult,
@@ -118,7 +119,7 @@ const confirm = async () => {
     checkOutDate: dayjs(searchInfo.value.endDate).format("YYYY-MM-DD"),
     homeId: homeId.value as any,
     userId: userInfo.userId,
-    userTenantList: travellerList.value.filter(item => !item.edit).map(item => ({
+    userTenantList: travellerList.value.map(item => ({
       cardIdNumber: item.IDCardNumber,
       name: item.IDCardName,
       phone: item.IDCardPhoneNumber
@@ -175,8 +176,6 @@ const listenMessage = async (e:WindowEventMap['message']) => {
   //   选择旅客信息
     travellerList.value[travellerIndex.value] = {
       ...e.data.identity,
-      edit: false,
-      add: true
     }
   } else if(e.data.pass) {
     loading.value = true
@@ -420,7 +419,8 @@ onMounted(() => {
               <div class="require-info__traveller-info__list__item__execute" v-if="!orderInfo?.orderId">
                 <el-button type="primary" @click="selectTraveller(index)">选择填入</el-button>
               </div>
-              <TravellerCard class="flex-1" :item="item" v-model:edit="item.edit" :add="item?.add" @save="saveTraveller(index, $event)"></TravellerCard>
+              <OrderInfoCard :item="item" @save="saveTraveller(index, $event)"></OrderInfoCard>
+<!--              <TravellerCard class="flex-1" :item="item" v-model:edit="item.edit" :add="item?.add" @save="saveTraveller(index, $event)"></TravellerCard>-->
             </div>
           </div>
         </div>
@@ -533,7 +533,7 @@ onMounted(() => {
           <div class="rcami-info--empty" v-else>暂无数据</div>
         </transition-group>
         <div class="rcami-info__execute">
-          <el-button @click="rcamiDialogOpen" v-if="orderInfo.orderState ==='已支付'">报修</el-button>
+          <el-button @click="rcamiDialogOpen" v-if="orderInfo.orderState ==='已支付' && Number(decrypt(orderInfo.dynamicDoorPassword))">报修</el-button>
         </div>
       </div>
     </div>
@@ -558,7 +558,7 @@ onMounted(() => {
 .app-container {
   @apply px-20 min-h-[100dvh] grid grid-cols-3 gap-4 pt-20 relative;
   .detail {
-    @apply col-span-1 sticky right-0 top-20 h-fit;
+    @apply col-span-1 sticky right-0 top-20 h-fit pb-4;
     .card {
       @apply p-2 mb-2 rounded-md border w-full shadow-sm;
       &__title {

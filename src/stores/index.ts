@@ -19,7 +19,7 @@ export const useGlobalStore = defineStore('global',() => {
     const isLogin = computed(() => userId.value && token.value)
     const router = useRouter()
     const getUserInfo = async ():Promise<UserInfo | undefined> => {
-        if(userId.value && token.value && !userInfo.value.userId) {
+        if(userId.value && token.value) {
             const {data} = await getUInfo(Number(userId.value))
             userInfo.value = data
             return Promise.resolve(data)

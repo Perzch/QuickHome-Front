@@ -41,6 +41,7 @@ declare module 'vue' {
     Layout: typeof import('./src/components/Layout/index.vue')['default']
     Loading: typeof import('./src/components/base/Loading.vue')['default']
     MyButton: typeof import('./src/components/base/MyButton.vue')['default']
+    OrderInfoCard: typeof import('./src/components/OrderInfoCard.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchBar: typeof import('./src/components/SearchBar.vue')['default']
