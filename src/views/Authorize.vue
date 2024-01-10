@@ -36,8 +36,6 @@ const rules = ref<FormRules>({
       validator: (rule:any, value:any, callback:any) => {
         if (/^(?:(?:\+|00)86)?1[3-9]\d{9}$/.test(value)) {
           select.value = 'userPhone'
-        } else if (/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/g.test(value)) {
-          select.value = 'userEmail'
         } else {
           select.value = 'userAccount'
         }
@@ -148,6 +146,8 @@ const login = async () => {
       // localStorage.setItem('token',data.token)
       // localStorage.setItem('userId',data.userId)
       userInfo.value = await (await getUserInfo(userId.value as any)).data
+      ElMessage.success('登录成功!')
+      await router.push({path: '/'})
     } catch (e:any) {
       return ElMessage.error(e.msg || '登录失败')
     }
@@ -191,7 +191,7 @@ const login = async () => {
                hide-required-asterisk @validate="formValidate" ref="form">
         <el-form-item prop="userInput">
           <template #label>账号</template>
-          <el-input v-model="user.userInput" placeholder="账号/邮箱/手机号" clearable
+          <el-input v-model="user.userInput" placeholder="账号/手机号" clearable
                     :class="{'error-input':error.userInput, 'pass-input':error.userInput === false}">
             <template #suffix>
               <el-button type="primary" size="small" @click="sendCaptcha" :disabled="captchaText !== '获取验证码'" v-if="['userPhone','userEmail'].includes(select) && (pass || type === '0')">
