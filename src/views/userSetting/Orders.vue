@@ -111,6 +111,7 @@ onUnmounted(() => {
             </div>
             <div class="order-list__item__body__execute">
               <el-button type="success" v-if="item.orderState === '未支付'" @click="pay(item)">支付</el-button>
+              <span></span>
               <el-button type="primary" @click="toDetail(item)">详情</el-button>
             </div>
           </div>
@@ -193,7 +194,7 @@ onUnmounted(() => {
         @apply col-span-1;
       }
       &__execute {
-        @apply flex flex-col gap-2;
+        @apply flex flex-col gap-2 items-center justify-center;
       }
     }
   }

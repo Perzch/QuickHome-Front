@@ -135,22 +135,28 @@ const login = async () => {
   if(pass.value) {
   //   免密登录
     await form.value .validateField(['userInput', 'captcha'])
-    const {data} = await loginByPhone({
-      userPhone: user.value.userInput
-    })
-    localStorage.setItem('token',data.token)
-    localStorage.setItem('userId',data.userId)
-    console.log(data.userId)
+    try {
+      const {data} = await loginByPhone({
+        userPhone: user.value.userInput
+      })
+      localStorage.setItem('token',data.token)
+      localStorage.setItem('userId',data.userId)
+    } catch (e:any) {
+      return ElMessage.error(e.msg || '登录失败')
+    }
   } else {
     await form.value.validateField(['userInput', 'userPwd'])
     const tmp:User = {
       [select.value]: user.value.userInput,
       userPwd: encrypt(user.value.userPwd || '')
     }
-    const {data} = (await sendLogin(tmp))
-    localStorage.setItem('token',data.token)
-    localStorage.setItem('userId',data.userId.toString())
-    console.log(data.userId)
+    try {
+      const {data} = (await sendLogin(tmp))
+      localStorage.setItem('token',data.token)
+      localStorage.setItem('userId',data.userId.toString())
+    } catch (e:any) {
+      return ElMessage.error(e.msg || '登录失败')
+    }
   }
   const {data} = await getUserInfo(localStorage.getItem('userId') as any)
   localStorage.setItem('userInfo', data)

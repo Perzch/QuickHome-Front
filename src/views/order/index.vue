@@ -4,14 +4,12 @@ import {useRoute, useRouter} from "vue-router";
 import {useGlobalStore} from "@/stores";
 import {getHome, updateHome} from "@/api/home/home";
 import type {
-  Coupon,
   CouponResult,
   HomeSearchResult,
   Identity,
   Order,
   OrderRequestData,
   RCAMI, RCAMIResult,
-  UserCoupon
 } from "@/types";
 import DeviceTag from "@components/DeviceTag.vue";
 import {Location} from "@element-plus/icons-vue";
@@ -59,11 +57,6 @@ const originalPrice = ref(0)
 const discountedPrice = ref(0)
 const getData = async () => {
     loading.value = true
-    try {
-      await statusPayment(userInfo.userId)
-    } catch (e) {
-      return await router.push('/user/settings/wallet')
-    }
     const {data} = await getHome(homeId.value as any)
     homeInfo.value = data
     travellerList.value = new Array(data.homeInformation.maxPerson).fill({ add: true,edit: true })
@@ -147,15 +140,19 @@ const pay = async (data:Order) => {
       orderId: data.orderId,
       UACID: couponInfo.value?.usersAndCoupons?.UACID
     })
-  }catch (e) {
-    ElMessage.error('支付失败')
-    await updateOrder({
-      orderId: data.orderId,
-      orderState: '已取消',
-      endTime: dayjs().format('YYYY-MM-DD HH:mm:ss')
-    })
-    loading.value = false
-    return await router.push('/')
+  }catch (e:any) {
+    if(e.msg === '余额不足') {
+      loading.value = false
+      throw ElMessage.error(e.msg)
+    } else {
+      ElMessage.error('支付失败')
+      await updateOrder({
+        orderId: data.orderId,
+        orderState: '已取消',
+        endTime: dayjs().format('YYYY-MM-DD HH:mm:ss')
+      })
+      return await router.push('/')
+    }
   }
   if(couponInfo.value?.usersAndCoupons) {
     await useCoupon(couponInfo.value.usersAndCoupons.UACID)
@@ -365,6 +362,12 @@ const releaseRcami = async () => {
   ElMessage.success('报修成功')
   await getRepairInfo()
 }
+
+onMounted(() => {
+  statusPayment(userInfo.userId).catch(async ()=> {
+    await router.push('/user/settings/wallet')
+  })
+})
 </script>
 
 <template>

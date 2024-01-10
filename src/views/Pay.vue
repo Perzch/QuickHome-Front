@@ -19,15 +19,13 @@ const inputChange = async (index:number) => {
     return
   }
   if(index === 5) {
-    if(set) {
+    if(set.value) {
     //   设置支付密码
       await setPayment({
-        userId: userInfo.userId,
+        userID: userInfo.userId,
         paymentPassword: encrypt(payNumbers.value.join(''))
       })
-      window.opener.postMessage({
-        pass: true
-      }, '*')
+      window.opener.postMessage(null, '*')
       window.close()
     } else {
       await verifyPayment({

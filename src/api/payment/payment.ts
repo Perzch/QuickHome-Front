@@ -6,7 +6,7 @@ export function setPayment(data){
     localStorage.setItem('execute', '设置支付密码')
     return service({
         method: 'post',
-        url,
+        url: url + '/set',
         data
     })
 }
