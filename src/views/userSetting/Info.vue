@@ -6,7 +6,7 @@ import {updateUser} from "@/api/user/user";
 import {updateUserInfo} from "@/api/user/info";
 import dayjs from "dayjs";
 
-const { userInfo } = useGlobalStore()
+const { userInfo,getUserInfo } = useGlobalStore()
 const loading = ref(false)
 const rules = {
   'user.userName': [
@@ -14,7 +14,7 @@ const rules = {
   ],
   'user.userEmail': [
     { required: true ,message: '邮箱不能为空' },
-    { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
+    { pattern: /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/, message: '请输入正确的邮箱', trigger: 'blur' }
   ],
   'user.userPhone': [
     { required: true ,message: '电话不能为空' },
@@ -27,7 +27,8 @@ const rules = {
     { required: true ,message: '出生日期不能为空' }
   ],
 }
-const form = ref<UserInfo>(userInfo)
+const form = ref<UserInfo>(JSON.parse(JSON.stringify(userInfo)))
+const oldForm = ref<UserInfo>(JSON.parse(JSON.stringify(userInfo)))
 const editAble = ref(false)
 const uploadOptions = computed(() => ({
   action: import.meta.env.VITE_BASE_URL + '/upload',
@@ -41,9 +42,11 @@ const fileListChange = (res:ResponseData<string>) => {
 }
 
 const edit = () => {
+  oldForm.value = JSON.parse(JSON.stringify(form.value))
   editAble.value = true
 }
 const cancelEdit = () => {
+  form.value = JSON.parse(JSON.stringify(oldForm.value))
   editAble.value = false
 }
 
@@ -51,8 +54,10 @@ const confirmEdit = async () => {
   loading.value = true
   await updateUser(form.value.user)
   await updateUserInfo(form.value.userInformation)
+  ElMessage.success('修改成功!')
   loading.value = false
   editAble.value = false
+  getUserInfo()
 }
 </script>
 
@@ -127,9 +132,10 @@ const confirmEdit = async () => {
               <el-radio-group v-model="form.userInformation.userGender">
                 <el-radio label="男">男</el-radio>
                 <el-radio label="女">女</el-radio>
+                <el-radio label="保密">保密</el-radio>
               </el-radio-group>
             </el-form-item>
-            <span class="user-info__item__text" v-else>{{userInfo.userInformation.userGender}}</span>
+            <span class="user-info__item__text" v-else>{{userInfo.userInformation?.userGender}}</span>
           </el-collapse-transition>
         </div>
       </div>
@@ -145,7 +151,7 @@ const confirmEdit = async () => {
                   value-format="YYYY-MM-DD HH:mm:ss"
               />
             </el-form-item>
-            <span class="user-info__item__text" v-else>{{dayjs(userInfo.userInformation.userBirthday).format("YYYY年MM月DD日")}}</span>
+            <span class="user-info__item__text" v-else>{{userInfo.userInformation?.userBirthday ? dayjs(userInfo.userInformation?.userBirthday).format("YYYY年MM月DD日") : ''}}</span>
           </el-collapse-transition>
         </div>
       </div>
@@ -156,7 +162,7 @@ const confirmEdit = async () => {
             <el-form-item prop="userInformation.userSignature" v-if="editAble">
               <el-input type="textarea" :rows="2" v-model="form.userInformation.userSignature" placeholder="请输入"></el-input>
             </el-form-item>
-            <span class="user-info__item__text" v-else>{{userInfo.userInformation.userSignature}}</span>
+            <span class="user-info__item__text" v-else>{{userInfo.userInformation?.userSignature}}</span>
           </el-collapse-transition>
         </div>
       </div>

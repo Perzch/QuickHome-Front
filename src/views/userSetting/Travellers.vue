@@ -93,11 +93,14 @@ const handleAdd = () => {
         <el-button type="primary" icon="plus" @click="handleAdd" v-if="!select">添加</el-button>
       </div>
     </div>
-    <div class="card-list">
-      <transition-group name="fade">
-        <TravellerCard :item="item" :select="select" v-model:edit="item.edit" @deleteCard="deleteCard" @save="save" v-for="(item,index) in list" :key="item.IDCardRecordID || index"/>
-      </transition-group>
-    </div>
+    <transition name="fade" mode="out-in">
+      <div class="card-list" v-if="list.length">
+        <transition-group name="fade">
+          <TravellerCard :item="item" :select="select" v-model:edit="item.edit" @deleteCard="deleteCard" @save="save" v-for="(item,index) in list" :key="item.IDCardRecordID || index"/>
+        </transition-group>
+      </div>
+      <div class="card-list--empty" v-else>暂无数据</div>
+    </transition>
     <div class="flex justify-end my-4">
       <el-pagination
           v-model="queryParams.page"
@@ -126,5 +129,8 @@ const handleAdd = () => {
 }
 .card-list {
   @apply grid grid-cols-2 gap-2;
+}
+.card-list--empty {
+  @apply text-2xl text-center text-gray-400;
 }
 </style>

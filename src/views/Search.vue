@@ -6,7 +6,6 @@ import {useRoute, useRouter} from "vue-router";
 import type {HomeSearchInfo, HomeSearchResult} from "@/types";
 import DeviceTag from "@components/DeviceTag.vue";
 import {Location} from "@element-plus/icons-vue";
-import {useSearchStore} from "@/stores/search";
 const route = useRoute()
 const router = useRouter()
 const list = ref<HomeSearchResult[]>()
@@ -61,7 +60,9 @@ const toDetail = (item:HomeSearchResult) => {
               </div>
               <div class="home-item__device-list" v-if="item.homeDeviceList.length">
                 <span class="home-item__info__title">设备: </span>
-                <DeviceTag :device="device" v-for="device in item.homeDeviceList" :key="device.deviceID"></DeviceTag>
+                <div class="home-item__device-list__item">
+                  <DeviceTag :device="device" v-for="device in item.homeDeviceList" :key="device.deviceID"></DeviceTag>
+                </div>
               </div>
             </div>
             <div class="home-item__price">
@@ -126,6 +127,9 @@ const toDetail = (item:HomeSearchResult) => {
         }
         .home-item__name {
           @apply flex items-center gap-2 text-2xl;
+        }
+        .home-item-device-list__item {
+          @apply grid grid-cols-4 gap-2;
         }
       }
       .home-item__price {

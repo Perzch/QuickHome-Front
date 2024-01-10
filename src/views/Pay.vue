@@ -2,29 +2,43 @@
 
 import {onMounted, onUnmounted, ref} from "vue";
 import {useGlobalStore} from "@/stores";
-import {verifyPayment} from "@/api/payment/payment";
+import {setPayment, verifyPayment} from "@/api/payment/payment";
 import {encrypt} from "@/utils/encryption";
+import {useRoute} from "vue-router";
+import {addBalance} from "@/api/balance/balance";
 
-
+const route = useRoute()
 const {userInfo} = useGlobalStore()
+const set = ref(Boolean(route.query.set))
 const payNumbers = ref(new Array(6))
 const inputs = ref<HTMLInputElement[]>([])
-const inputChange = (index:number) => {
+const inputChange = async (index:number) => {
   if(isNaN(Number(payNumbers.value[index]))) {
     payNumbers.value[index] = null
     ElMessage.error('请输入数字')
     return
   }
   if(index === 5) {
-    verifyPayment({
-      userID: userInfo.userId,
-      encryptedPassword: encrypt(payNumbers.value.join(''))
-    }).then(() => {
+    if(set) {
+    //   设置支付密码
+      await setPayment({
+        userId: userInfo.userId,
+        paymentPassword: encrypt(payNumbers.value.join(''))
+      })
       window.opener.postMessage({
         pass: true
       }, '*')
       window.close()
-    })
+    } else {
+      await verifyPayment({
+        userID: userInfo.userId,
+        encryptedPassword: encrypt(payNumbers.value.join(''))
+      })
+      window.opener.postMessage({
+        pass: true
+      }, '*')
+      window.close()
+    }
   } else {
     inputs.value[index+1].focus()
   }

@@ -2,7 +2,8 @@
 import {useGlobalStore} from "@/stores";
 import {onUnmounted, ref} from "vue";
 import {getBalance, updateBalance} from "@/api/balance/balance";
-import type {Balance} from "@/types";
+import type {Balance, ResponseData} from "@/types";
+import {statusPayment} from "@/api/payment/payment";
 
 const { userInfo } = useGlobalStore()
 const form = ref<Balance>({} as Balance)
@@ -13,6 +14,14 @@ const getData =async () => {
   loading.value = true
   const {data} = await getBalance(userInfo.userId)
   form.value = data
+  try{
+    await statusPayment(userInfo.userId)
+  } catch (e) {
+    await ElMessageBox.alert('请先设置支付密码', '提示', {
+      confirmButtonText: '确定'
+    })
+    window.open('/pay?set=1', '_blank')
+  }
   loading.value = false
 }
 getData()
@@ -21,8 +30,18 @@ const dialogOpen = (flag: boolean) => {
   ElMessageBox.prompt('请输入金额(跳转后请勿关闭此页面)', flag ? '充值' : '提现', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
-    inputPattern: /^\d+(\.\d{1,2})?$/,
-    inputErrorMessage: '请输入正确的金额'
+    inputValidator: (value: string) => {
+      if (!value) {
+        return '请输入金额'
+      }
+      if (Number(value) <= 0) {
+        return '请输入正确的金额'
+      }
+      if(Number(value) > 50000) {
+        return '最高操作金额为50000'
+      }
+      return true
+    }
   }).then(async ({value}:any) => {
     balance.value = flag ? Number(value) : -Number(value)
     window.open(`/pay`, '_blank')
@@ -35,7 +54,7 @@ const listener =async (e: MessageEvent) => {
       userId: userInfo.userId,
       userBalance: balance.value
     })
-    ElMessage.success(e.data > 0 ? '充值成功' : '提现成功')
+    ElMessage.success(balance.value > 0 ? '充值成功' : '提现成功')
     getData()
   }
 }

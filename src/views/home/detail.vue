@@ -12,7 +12,7 @@ import {addCollection, checkCollection, delCollection} from "@/api/home/collecti
 
 const route = useRoute()
 const router = useRouter()
-const searchInfo = JSON.parse(localStorage.getItem('searchInfo') || '')
+const searchInfo = JSON.parse(localStorage.getItem('searchInfo') || '{}')
 const check = ref(false)
 const { userInfo } = useGlobalStore()
 const back = () => {

@@ -103,7 +103,7 @@ const marks = {
     </div>
     <el-tabs v-model="tab" class="demo-tabs">
       <el-tab-pane label="房屋" :name="0">
-        <div class="collection-list">
+        <div class="collection-list" v-if="homeList.length">
           <transition-group>
             <el-card v-for="item in homeList" :key="item.hFavoriteRecordsId" shadow="hover" class="collection-list__item" @click="to(item)">
               <div class="collection-list__item__img">
@@ -120,6 +120,9 @@ const marks = {
               </div>
             </el-card>
           </transition-group>
+        </div>
+        <div class="collection-list--empty">
+          暂无数据
         </div>
       </el-tab-pane>
 <!--      <el-tab-pane label="景点" :name="1">-->
@@ -157,6 +160,9 @@ const marks = {
 </template>
 
 <style scoped lang="scss">
+.wrap {
+  @apply w-full;
+}
 .title {
   @apply mb-4;
   h1 {
@@ -192,5 +198,8 @@ const marks = {
       }
     }
   }
+}
+.collection-list--empty {
+  @apply text-2xl text-center text-gray-500;
 }
 </style>

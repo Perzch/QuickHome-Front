@@ -1,7 +1,3 @@
-<script lang="ts">
-import { useTitle } from "@vueuse/core";
-// useTitle("404 Not Found / QuickHome")
-</script>
 <template>
     <div class="wrap">
         <h2>404</h2>

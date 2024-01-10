@@ -31,6 +31,7 @@ import {useCoupon} from "@/api/coupon/coupon";
 import {getIdentityByOrder} from "@/api/identity/identity";
 import {decrypt} from "@/utils/encryption";
 import {addRCAMI, listRCAMI} from "@/api/RCAMI/RCAMI";
+import {statusPayment} from "@/api/payment/payment";
 
 const route = useRoute()
 const homeId = ref(route.query.homeId)
@@ -58,6 +59,11 @@ const originalPrice = ref(0)
 const discountedPrice = ref(0)
 const getData = async () => {
     loading.value = true
+    try {
+      await statusPayment(userInfo.userId)
+    } catch (e) {
+      return await router.push('/user/settings/wallet')
+    }
     const {data} = await getHome(homeId.value as any)
     homeInfo.value = data
     travellerList.value = new Array(data.homeInformation.maxPerson).fill({ add: true,edit: true })
@@ -290,6 +296,7 @@ const delOrder = async () => {
   })
   await deleteOrder(orderInfo.value.orderId)
   ElMessage.success('删除成功')
+  router.push('/user/settings/orders')
 }
 
 const checkoutHome = async () => {
@@ -569,7 +576,7 @@ const releaseRcami = async () => {
         @apply mb-2;
       }
       &__device-list {
-        @apply flex flex-wrap;
+        @apply grid grid-cols-2 gap-2;
         & > * {
           @apply mr-2 mb-2;
         }

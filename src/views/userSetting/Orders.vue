@@ -109,7 +109,7 @@ onUnmounted(() => {
               <p class="order-list__item__title">押金:</p>
               <p>￥{{item.orderDeposit}}</p>
             </div>
-            <div class="order-list__item__execute">
+            <div class="order-list__item__body__execute">
               <el-button type="success" v-if="item.orderState === '未支付'" @click="pay(item)">支付</el-button>
               <el-button type="primary" @click="toDetail(item)">详情</el-button>
             </div>
@@ -191,6 +191,9 @@ onUnmounted(() => {
       }
       &__deposit {
         @apply col-span-1;
+      }
+      &__execute {
+        @apply flex flex-col gap-2;
       }
     }
   }

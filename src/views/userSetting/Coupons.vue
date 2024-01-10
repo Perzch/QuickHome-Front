@@ -49,7 +49,7 @@ const selectCoupon = (item:CouponResult) => {
       </div>
     </div>
     <div class="coupon__content">
-      <div class="coupon-list">
+      <div class="coupon-list" v-if="list.length">
         <div class="coupon-item" v-for="item in list" :key="item.coupon.couponId">
           <div class="coupon-item__intensity">
             <template v-if="item.coupon.discountMethod === '折扣'"><span class="text-2xl">{{item.coupon.discountIntensity * 10}}</span>折</template>
@@ -72,6 +72,7 @@ const selectCoupon = (item:CouponResult) => {
           <div class="coupon-item__button" @click="selectCoupon(item)" v-if="!select || price && price > item.coupon.useThreshold">{{select ? '选择' : '立即使用'}}</div>
         </div>
       </div>
+      <div class="coupon-list--empty" v-else>暂无数据</div>
       <div class="flex justify-end my-4">
         <el-pagination
           @current-change="getList"
@@ -87,6 +88,9 @@ const selectCoupon = (item:CouponResult) => {
 </template>
 
 <style scoped lang="scss">
+.wrap {
+  @apply w-full;
+}
 .title {
   @apply mb-4;
   h1 {
@@ -122,5 +126,8 @@ const selectCoupon = (item:CouponResult) => {
       @apply flex items-center justify-center col-span-1 cursor-pointer text-danger;
     }
   }
+}
+.coupon-list--empty {
+  @apply text-2xl text-center text-gray-500;
 }
 </style>

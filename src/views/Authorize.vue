@@ -9,6 +9,7 @@ import {login as sendLogin, loginByPhone, registerByPhone as sendRegister} from 
 import { getPhone as getCaptcha } from '@/api/method/method'
 import {useGlobalStore} from "@/stores";
 import {getUserInfo} from "@/api/user/info";
+import {addBalance} from "@/api/balance/balance";
 type Error = {
   userInput: boolean,
   userPwd: boolean,
@@ -120,6 +121,9 @@ const register = async () => {
     userPwd: encrypt(user.value.userPwd || '')
   }
   const res =  await sendRegister(tmp)
+  await addBalance({
+    userId: res.data
+  })
   localStorage.setItem('userId',res.data.toString())
   ElMessage.success('注册成功!')
   changeType()
@@ -130,15 +134,14 @@ const register = async () => {
 const login = async () => {
   if(pass.value) {
   //   免密登录
-    console.log('1')
     await form.value .validateField(['userInput', 'captcha'])
     const {data} = await loginByPhone({
       userPhone: user.value.userInput
     })
     localStorage.setItem('token',data.token)
     localStorage.setItem('userId',data.userId)
+    console.log(data.userId)
   } else {
-    console.log(0)
     await form.value.validateField(['userInput', 'userPwd'])
     const tmp:User = {
       [select.value]: user.value.userInput,
@@ -147,6 +150,7 @@ const login = async () => {
     const {data} = (await sendLogin(tmp))
     localStorage.setItem('token',data.token)
     localStorage.setItem('userId',data.userId.toString())
+    console.log(data.userId)
   }
   const {data} = await getUserInfo(localStorage.getItem('userId') as any)
   localStorage.setItem('userInfo', data)
@@ -177,7 +181,7 @@ const login = async () => {
           <el-input v-model="user.userInput" placeholder="账号/邮箱/手机号" clearable
                     :class="{'error-input':error.userInput, 'pass-input':error.userInput === false}">
             <template #suffix>
-              <el-button type="primary" size="small" @click="sendCaptcha" :disabled="captchaText !== '获取验证码'" v-if="['userPhone','userEmail'].includes(select) && pass">
+              <el-button type="primary" size="small" @click="sendCaptcha" :disabled="captchaText !== '获取验证码'" v-if="['userPhone','userEmail'].includes(select) && (pass || type === '0')">
                 {{ captchaText }}
               </el-button>
             </template>
