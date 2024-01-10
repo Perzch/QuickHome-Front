@@ -73,7 +73,7 @@ const handleSearch = () => {
       <el-form-item class="home-type" v-if="all">
         <template #label>房型</template>
         <el-select multiple v-model="homeTypeList" clearable placeholder="房型" collapse-tags collapse-tags-tooltip :max-collapse-tags="3">
-          <el-option v-for="item in ['情侣房','大床房','电竞房']" :key="item" :label="item" :value="item"></el-option>
+          <el-option v-for="item in ['舒适房','电竞房','风景房','情侣房']" :key="item" :label="item" :value="item"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item class="min-rent" v-if="all">
@@ -87,7 +87,7 @@ const handleSearch = () => {
       <el-form-item class="device-list" v-if="all">
         <template #label>设备</template>
         <el-select multiple v-model="deviceList" clearable placeholder="设备" collapse-tags collapse-tags-tooltip :max-collapse-tags="3">
-          <el-option v-for="item in ['空调','热水器','冰箱','洗衣机']" :key="item" :label="item" :value="item"></el-option>
+          <el-option v-for="item in ['电视','空调','冰箱','洗衣机','热水器','冷暖器','其他']" :key="item" :label="item" :value="item"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item class="room-count" v-if="all">
