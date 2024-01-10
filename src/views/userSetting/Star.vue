@@ -121,7 +121,7 @@ const marks = {
             </el-card>
           </transition-group>
         </div>
-        <div class="collection-list--empty">
+        <div class="collection-list--empty" v-else>
           暂无数据
         </div>
       </el-tab-pane>

@@ -1,15 +1,15 @@
 <script lang="ts" setup>
 import {ref, shallowRef, computed} from "vue";
-import type {User, UserVerify} from "@/types";
+import type {User, UserInfo, UserVerify} from "@/types";
 import {useRoute, useRouter} from "vue-router";
 import {encrypt} from "@/utils/encryption";
 //@ts-ignore
 import type {FormInstance, FormRules} from "element-plus";
 import {login as sendLogin, loginByPhone, registerByPhone as sendRegister} from "../api/user/user";
 import { getPhone as getCaptcha } from '@/api/method/method'
-import {useGlobalStore} from "@/stores";
-import {getUserInfo} from "@/api/user/info";
 import {addBalance} from "@/api/balance/balance";
+import {useStorage} from "@vueuse/core";
+import {getUserInfo} from "@/api/user/info";
 type Error = {
   userInput: boolean,
   userPwd: boolean,
@@ -19,6 +19,9 @@ type Error = {
 const route = useRoute()
 const router = useRouter()
 const form = shallowRef(<FormInstance>{})
+const userId = useStorage('userId', '')
+const token = useStorage('token', '')
+const userInfo = useStorage<UserInfo>('userInfo', {} as UserInfo)
 const select = ref('')
 const captcha = ref('')
 const captchaText = ref(<string | number>'获取验证码')
@@ -124,7 +127,8 @@ const register = async () => {
   await addBalance({
     userId: res.data
   })
-  localStorage.setItem('userId',res.data.toString())
+  userId.value = res.data.toString()
+  // localStorage.setItem('userId',res.data.toString())
   ElMessage.success('注册成功!')
   changeType()
 }
@@ -139,8 +143,11 @@ const login = async () => {
       const {data} = await loginByPhone({
         userPhone: user.value.userInput
       })
-      localStorage.setItem('token',data.token)
-      localStorage.setItem('userId',data.userId)
+      token.value = data.token
+      userId.value = data.userId
+      // localStorage.setItem('token',data.token)
+      // localStorage.setItem('userId',data.userId)
+      userInfo.value = await (await getUserInfo(userId.value as any)).data
     } catch (e:any) {
       return ElMessage.error(e.msg || '登录失败')
     }
@@ -152,17 +159,17 @@ const login = async () => {
     }
     try {
       const {data} = (await sendLogin(tmp))
-      localStorage.setItem('token',data.token)
-      localStorage.setItem('userId',data.userId.toString())
+      token.value = data.token
+      userId.value = data.userId
+      // localStorage.setItem('token',data.token)
+      // localStorage.setItem('userId',data.userId)
+      userInfo.value = await (await getUserInfo(userId.value as any)).data
+      ElMessage.success('登录成功!')
+      await router.push({path: '/'})
     } catch (e:any) {
       return ElMessage.error(e.msg || '登录失败')
     }
   }
-  const {data} = await getUserInfo(localStorage.getItem('userId') as any)
-  localStorage.setItem('userInfo', data)
-  ElMessage.success('登录成功!')
-
-  router.push({path: '/'})
 }
 </script>
 <template>

@@ -19,10 +19,10 @@ export const useGlobalStore = defineStore('global',() => {
     const isLogin = computed(() => userId.value && token.value)
     const router = useRouter()
     const getUserInfo = async ():Promise<UserInfo | undefined> => {
-        if(userId.value && token.value) {
+        if(userId.value && token.value && !userInfo.value.userId) {
             const {data} = await getUInfo(Number(userId.value))
             userInfo.value = data
-            return data
+            return Promise.resolve(data)
         }
     }
     const logout = () => {
