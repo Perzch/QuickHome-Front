@@ -530,7 +530,7 @@ const reply = async () => {
         <div class="price-summary__total">
           <span>总价</span>
           <div>
-            <span class="price-summary__total__old">{{originalPrice}}元</span>
+            <span class="price-summary__total__old">{{originalPrice + orderInfo.orderDeposit}}元</span>
             <span class="price-summary__total__new">{{discountedPrice}}元</span>
             <el-popover
                 placement="top-start"
