@@ -6,7 +6,7 @@ import {getHome, updateHome} from "@/api/home/home";
 import OrderInfoCard from "@components/OrderInfoCard.vue";
 import type {
   CouponResult,
-  HomeSearchResult,
+  HomeSearchResult, HousingReview,
   Identity,
   Order,
   OrderRequestData,
@@ -31,6 +31,7 @@ import {getIdentityByOrder} from "@/api/identity/identity";
 import {decrypt} from "@/utils/encryption";
 import {addRCAMI, listRCAMI} from "@/api/RCAMI/RCAMI";
 import {statusPayment} from "@/api/payment/payment";
+import {addReview} from "@/api/review/home";
 
 const route = useRoute()
 const homeId = ref(route.query.homeId)
@@ -273,6 +274,9 @@ if(orderId.value) {
   await getOrderInfo()
 }
 
+/**
+ * @description 获取房屋动态密码
+ */
 const getPassword = async () => {
   if(dayjs(dayjs().format('YYYY-MM-DD')).add(14,'hour').isBefore(dayjs(orderInfo.value.checkInTime))) {
     return ElMessage.error('未到获取密码时间')
@@ -289,6 +293,10 @@ const getPassword = async () => {
   orderInfo.value.dynamicDoorPassword = data
 }
 
+/**
+ * @description 取消订单
+ */
+
 const cancelOrder = async () => {
   await ElMessageBox.confirm('是否取消订单','提示', {
     confirmButtonText: '确定',
@@ -296,9 +304,12 @@ const cancelOrder = async () => {
     type: 'warning'
   })
   await endOrderRefund(orderInfo.value.orderId)
-  await getOrderInfo()
+  reviewDialogOpen()
 }
 
+/**
+ * @description 删除订单
+ */
 const delOrder = async () => {
   await ElMessageBox.confirm('是否删除该订单', '提示', {
     confirmButtonText: '确定',
@@ -310,6 +321,9 @@ const delOrder = async () => {
   router.push('/user/settings/orders')
 }
 
+/**
+ * @description 退房
+ */
 const checkoutHome = async () => {
   if(dayjs(orderInfo.value.checkOutTime).isSame(dayjs(), 'day')) {
     await ElMessageBox.confirm('是否确认退房', '提示', {
@@ -319,6 +333,7 @@ const checkoutHome = async () => {
     })
     const {data} = await checkOut(orderInfo.value.orderId)
     ElMessage.success('退房成功')
+    await reviewDialogOpen()
   } else {
     ElMessage.error('未到退房时间,请取消订单')
   }
@@ -383,6 +398,31 @@ onMounted(() => {
     await router.push('/user/settings/wallet')
   })
 })
+
+const reviewForm = ref<HousingReview>({} as HousingReview)
+const reviewRules = {
+  comments: [
+    {required: true, message: '请输入评价内容'}
+  ]
+}
+const reviewFormRef = ref()
+const reviewOpen = ref(false)
+const reviewDialogOpen = () => {
+  Object.assign(reviewForm.value, {
+    housingReviewRating: 0,
+    homeId: homeId.value as any,
+    userId: userInfo.userId,
+    comments: ''
+  })
+  reviewOpen.value = true
+}
+const reply = async () => {
+  await reviewFormRef.value.validate()
+  await addReview(reviewForm.value)
+  reviewOpen.value = false
+  ElMessage.success('评论成功')
+  await getOrderInfo()
+}
 </script>
 
 <template>
@@ -563,6 +603,19 @@ onMounted(() => {
         <el-button @click="rcamiDialogClose">取消</el-button>
         <el-button type="primary" @click="releaseRcami">确定</el-button>
       </template>
+    </el-dialog>
+    <el-dialog v-model="reviewOpen" title="评价" :before-close="getOrderInfo">
+      <el-form :model="reviewForm" :rules="reviewRules" ref="reviewFormRef" label-width="6.225rem">
+        <el-form-item label="评分" prop="housingReviewRating">
+          <el-rate v-model="reviewForm.housingReviewRating" />
+        </el-form-item>
+        <el-form-item label="内容" prop="comments">
+          <el-input type="textarea" :rows="2" v-model="reviewForm.comments" placeholder="请输入评论内容"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="reply">提交</el-button>
+        </el-form-item>
+      </el-form>
     </el-dialog>
   </div>
 </template>

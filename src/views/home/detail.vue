@@ -97,7 +97,8 @@ const like = async (item: HousingReview) => {
 const open = ref(false)
 const title = ref('')
 const reviewForm = ref<HousingReview>({} as HousingReview)
-const rules = {
+const reviewFormRef = ref()
+const reviewRules = {
   comments: [
     { required: true, message: '请输入评论内容', trigger: 'blur' },
   ]
@@ -118,6 +119,7 @@ const dialogClose = () => {
   open.value = false
 }
 const reply = async () => {
+  await reviewFormRef.value.validate()
   await addReview(reviewForm.value)
   await getList()
   dialogClose()
@@ -201,11 +203,11 @@ const collectionHome = async () => {
     <div class="comment__list">
       <div class="comment__list__header">
         <p class="comment__list__header__title">评论</p>
-        <div class="comment__list__header__execute">
-          <el-button type="primary" @click="dialogOpen(null,'发表评论')">发表</el-button>
-        </div>
+<!--        <div class="comment__list__header__execute">-->
+<!--          <el-button type="primary" @click="dialogOpen(null,'发表评论')">发表</el-button>-->
+<!--        </div>-->
       </div>
-      <el-collapse-transition>
+      <transition-group name="fade">
         <div class="comment__list__item" v-if="list.length" v-for="(item) in list" :key="item.housingReviewId">
           <div class="comment__list__item__title">
             <div class="comment__list__item__number">{{item.index}}楼</div>
@@ -234,7 +236,7 @@ const collectionHome = async () => {
           </div>
         </div>
         <div class="comment__list__item--empty" v-else>暂无评论</div>
-      </el-collapse-transition>
+      </transition-group>
       <div class="pagination">
         <el-pagination
             v-model:current-page="queryParams.page"
@@ -247,10 +249,10 @@ const collectionHome = async () => {
       </div>
     </div>
     <el-dialog v-model="open" :title="title" @close="dialogClose">
-      <el-form :model="reviewForm" :rules="rules" label-width="6.225rem">
-        <el-form-item label="评分" prop="housingReviewRating">
-          <el-rate v-model="reviewForm.housingReviewRating" />
-        </el-form-item>
+      <el-form :model="reviewForm" :rules="reviewRules" ref="reviewFormRef" label-width="6.225rem">
+<!--        <el-form-item label="评分" prop="housingReviewRating">-->
+<!--          <el-rate v-model="reviewForm.housingReviewRating" />-->
+<!--        </el-form-item>-->
         <el-form-item label="内容" prop="comments">
           <el-input type="textarea" :rows="2" v-model="reviewForm.comments" placeholder="请输入评论内容"></el-input>
         </el-form-item>
