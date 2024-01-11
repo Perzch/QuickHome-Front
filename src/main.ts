@@ -5,9 +5,6 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import debounce from '@/utils/directives/debounce'
-//@ts-ignore
-import { MotionPlugin } from '@vueuse/motion'
-import { autoAnimatePlugin } from '@formkit/auto-animate/vue'
 
 // @ts-ignore
 import App from "@/App.vue";
@@ -21,8 +18,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 app.directive('debounce', debounce)
 app.use(createPinia())
-app.use(MotionPlugin)
-app.use(autoAnimatePlugin)
 app.use(router)
 
 app.mount('#app')

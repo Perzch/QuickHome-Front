@@ -10,7 +10,19 @@ declare module 'vue' {
     AttractionSwiper: typeof import('./src/components/AttractionSwiper.vue')['default']
     ContextMenu: typeof import('./src/components/base/ContextMenu.vue')['default']
     DeviceTag: typeof import('./src/components/DeviceTag.vue')['default']
+    ElAvatar: typeof import('element-plus/es')['ElAvatar']
+    ElButton: typeof import('element-plus/es')['ElButton']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
+    ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
+    ElDialog: typeof import('element-plus/es')['ElDialog']
+    ElDrawer: typeof import('element-plus/es')['ElDrawer']
+    ElForm: typeof import('element-plus/es')['ElForm']
+    ElFormItem: typeof import('element-plus/es')['ElFormItem']
+    ElIcon: typeof import('element-plus/es')['ElIcon']
+    ElInput: typeof import('element-plus/es')['ElInput']
+    ElPopover: typeof import('element-plus/es')['ElPopover']
+    ElRate: typeof import('element-plus/es')['ElRate']
+    ElTag: typeof import('element-plus/es')['ElTag']
     HeaderNav: typeof import('./src/components/Layout/HeaderNav.vue')['default']
     HotRoom: typeof import('./src/components/HotRoom.vue')['default']
     Layout: typeof import('./src/components/Layout/index.vue')['default']
@@ -23,5 +35,8 @@ declare module 'vue' {
     ThemeChange: typeof import('./src/components/ThemeChange.vue')['default']
     TravellerCard: typeof import('./src/components/TravellerCard.vue')['default']
     UserCenterCard: typeof import('./src/components/UserCenterCard.vue')['default']
+  }
+  export interface ComponentCustomProperties {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }
