@@ -30,14 +30,13 @@ const getList = async () => {
 }
 watch(queryParams, getList, {immediate: true})
 
-const cur = ref<Order>({})
+const cur = ref<Order>({} as Order)
 
 const pay = async (item:Order) => {
   window.open('/pay')
   cur.value = item
 }
 
-const router = useRouter()
 const toDetail = async (item:Order) => {
   router.push({
     path: '/order',
