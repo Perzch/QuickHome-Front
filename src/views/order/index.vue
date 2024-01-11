@@ -119,7 +119,7 @@ const confirm = async () => {
     checkOutDate: dayjs(searchInfo.value.endDate).format("YYYY-MM-DD"),
     homeId: homeId.value as any,
     userId: userInfo.userId,
-    userTenantList: travellerList.value.map(item => ({
+    userTenantList: travellerList.value.filter(t => t.IDCardNumber && t.IDCardPhoneNumber && t.IDCardName).map(item => ({
       cardIdNumber: item.IDCardNumber,
       name: item.IDCardName,
       phone: item.IDCardPhoneNumber
@@ -375,6 +375,7 @@ const releaseRcami = async () => {
   await addRCAMI(rcamiInfo.value)
   ElMessage.success('报修成功')
   await getRepairInfo()
+  rcamiDialogClose()
 }
 
 onMounted(() => {

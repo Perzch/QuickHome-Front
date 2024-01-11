@@ -5,7 +5,6 @@ import {useGlobalStore} from "@/stores";
 import {setPayment, verifyPayment} from "@/api/payment/payment";
 import {encrypt} from "@/utils/encryption";
 import {useRoute} from "vue-router";
-import {addBalance} from "@/api/balance/balance";
 
 const route = useRoute()
 const {userInfo} = useGlobalStore()
@@ -21,21 +20,27 @@ const inputChange = async (index:number) => {
   if(index === 5) {
     if(set.value) {
     //   设置支付密码
-      await setPayment({
+      setPayment({
         userID: userInfo.userId,
         paymentPassword: encrypt(payNumbers.value.join(''))
+      }).then((res) => {
+        window.opener.postMessage(null, '*')
+        window.close()
+      }).catch(({msg}) => {
+        ElMessage.error(msg)
       })
-      window.opener.postMessage(null, '*')
-      window.close()
     } else {
-      await verifyPayment({
+      verifyPayment({
         userID: userInfo.userId,
         encryptedPassword: encrypt(payNumbers.value.join(''))
+      }).then(() => {
+        window.opener.postMessage({
+          pass: true
+        }, '*')
+        window.close()
+      }).catch(({msg}) => {
+        ElMessage.error(msg)
       })
-      window.opener.postMessage({
-        pass: true
-      }, '*')
-      window.close()
     }
   } else {
     inputs.value[index+1].focus()
