@@ -8,6 +8,7 @@ import {Location} from "@element-plus/icons-vue";
 import {useRouter} from "vue-router";
 
 const { userInfo } = useGlobalStore()
+const router = useRouter()
 const tab = ref(0)
 watch(() => tab.value, () => {
   queryParams.value = {
@@ -26,6 +27,10 @@ const attractionList = ref<(AttractionCollection)[]>([] as AttractionCollection[
 const total = ref(0)
 const loading = ref(false)
 
+if(!userInfo.userId) {
+  ElMessage.error('请先登录')
+  router.push('/auth/1')
+}
 const getList = async () => {
   loading.value = true
   if(tab.value) {
@@ -60,7 +65,6 @@ const remove = (id: number) => {
   })
 }
 
-const router = useRouter()
 const to = (item: Attraction | HomeCollection) => {
   const key = tab.value ? 'attractionId' : 'homeId'
   router.push({

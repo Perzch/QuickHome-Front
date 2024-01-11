@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import {useRouter} from "vue-router";
 
 const { userInfo } = useGlobalStore()
+const router = useRouter()
 const list = ref<Order[]>([])
 const total = ref(0)
 const loading = ref(false)
@@ -15,6 +16,10 @@ const queryParams = ref({
   page: 1,
   size: 10
 })
+if(!userInfo.userId) {
+  ElMessage.error('请先登录')
+  router.push('/auth/1')
+}
 
 const getList = async () => {
   loading.value = true

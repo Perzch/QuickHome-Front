@@ -4,7 +4,11 @@ import {Star, Wallet, Postcard, Present, User, List, SwitchButton} from "@elemen
 import {useGlobalStore} from "@/stores";
 const router = useRouter()
 const route = useRoute()
-const {logout} = useGlobalStore()
+const {userInfo,logout} = useGlobalStore()
+if(!userInfo.userId) {
+  ElMessage.error('请先登录')
+  router.push('/auth/1')
+}
 const to = (path: string) => {
   router.push(`/user/settings/${path}`)
 }

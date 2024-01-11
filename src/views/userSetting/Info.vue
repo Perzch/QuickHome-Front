@@ -6,11 +6,14 @@ import {updateUser} from "@/api/user/user";
 import {updateUserInfo} from "@/api/user/info";
 import dayjs from "dayjs";
 import {useRouter} from "vue-router";
-
+const router = useRouter()
 const { userInfo,getUserInfo } = useGlobalStore()
+if(!userInfo.userId) {
+  ElMessage.error('请先登录')
+  router.push('/auth/1')
+}
 getUserInfo()
 const loading = ref(false)
-const router = useRouter()
 const rules = {
   'user.userName': [
     { required: true ,message: '姓名不能为空' }

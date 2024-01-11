@@ -6,6 +6,7 @@ import type {Coupon, CouponResult, UserCoupon} from "@/types";
 import {useRoute, useRouter} from "vue-router";
 const { userInfo } = useGlobalStore()
 const loading = ref(false)
+const router = useRouter()
 const list= ref<CouponResult[]>([] as CouponResult[])
 const total = ref(0)
 const queryParams = computed(() => ({
@@ -14,6 +15,10 @@ const queryParams = computed(() => ({
   size: 10
 }))
 
+if(!userInfo.userId) {
+  ElMessage.error('请先登录')
+  router.push('/auth/1')
+}
 const getList =async () => {
   loading.value = true
   const {data} = await listCoupon(queryParams.value)

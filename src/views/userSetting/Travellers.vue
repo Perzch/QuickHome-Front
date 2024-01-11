@@ -4,9 +4,10 @@ import {ref, watch} from "vue";
 import {addIdentity, deleteIdentity, listIdentity, updateIdentity} from "@/api/identity/identity";
 import type {Identity, UpdateIdentityRequestData} from "@/types";
 import TravellerCard from "@components/TravellerCard.vue";
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 
 const { userInfo } = useGlobalStore()
+const router = useRouter()
 const list = ref<(Identity & {edit: boolean})[]>([])
 const total = ref(0)
 const loading = ref(false)
@@ -16,6 +17,10 @@ const queryParams = ref({
   size: 10
 })
 
+if(!userInfo.userId) {
+  ElMessage.error('请先登录')
+  router.push('/auth/1')
+}
 const getList = async () => {
   loading.value = true
   const {data} = await listIdentity(queryParams.value)

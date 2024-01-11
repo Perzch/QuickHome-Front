@@ -2,9 +2,14 @@
 import UserCenterCard from "@/components/UserCenterCard.vue";
 import {List, Postcard, Present, Star, SwitchButton, User, Wallet} from "@element-plus/icons-vue";
 import {useGlobalStore} from "@/stores";
+import {useRouter} from "vue-router";
 
-const {logout} = useGlobalStore()
-
+const {userInfo,logout} = useGlobalStore()
+const router = useRouter()
+if(!userInfo.userId) {
+  ElMessage.error('请先登录')
+  router.push('/auth/1')
+}
 const handleClick = async () => {
   await ElMessageBox.confirm('是否退出登录', '提示', {
     confirmButtonText: '确定',

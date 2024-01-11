@@ -4,11 +4,18 @@ import {onUnmounted, ref} from "vue";
 import {getBalance, updateBalance} from "@/api/balance/balance";
 import type {Balance, ResponseData} from "@/types";
 import {statusPayment} from "@/api/payment/payment";
+import {useRouter} from "vue-router";
 
 const { userInfo } = useGlobalStore()
+const router = useRouter()
 const form = ref<Balance>({} as Balance)
 const loading = ref(false)
 const balance = ref(0)
+
+if(!userInfo.userId) {
+  ElMessage.error('请先登录')
+  router.push('/auth/1')
+}
 
 const getData =async () => {
   loading.value = true
