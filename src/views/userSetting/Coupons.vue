@@ -29,7 +29,6 @@ const getList =async () => {
 watch(() => queryParams.value, getList, {immediate: true})
 
 const route = useRoute()
-const router = useRouter()
 const select = ref(Boolean(route.query.select))
 const price = ref(Number(route.query.price))
 

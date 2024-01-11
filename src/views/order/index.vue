@@ -416,6 +416,12 @@ const reviewDialogOpen = () => {
   })
   reviewOpen.value = true
 }
+
+const reviewDialogClose = async () => {
+  reviewFormRef.value.resetFields()
+  reviewOpen.value = false
+  await getOrderInfo()
+}
 const reply = async () => {
   await reviewFormRef.value.validate()
   await addReview(reviewForm.value)
@@ -604,7 +610,7 @@ const reply = async () => {
         <el-button type="primary" @click="releaseRcami">确定</el-button>
       </template>
     </el-dialog>
-    <el-dialog v-model="reviewOpen" title="评价" :before-close="getOrderInfo">
+    <el-dialog v-model="reviewOpen" title="评价" :before-close="reviewDialogClose">
       <el-form :model="reviewForm" :rules="reviewRules" ref="reviewFormRef" label-width="6.225rem">
         <el-form-item label="评分" prop="housingReviewRating">
           <el-rate v-model="reviewForm.housingReviewRating" />
