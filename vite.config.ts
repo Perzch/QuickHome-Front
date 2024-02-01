@@ -19,7 +19,7 @@ export default defineConfig(async ({ command, mode}) => {
         proxy: {
           // @ts-ignore
           [env.VITE_BASE_URL]: {
-            target: "http://localhost:8080",
+            target: env.VITE_PROXY_URL,
             changeOrigin: true,
             rewrite: (path) => {
               return path.replace(`${env.VITE_BASE_URL}`, '')
@@ -27,7 +27,8 @@ export default defineConfig(async ({ command, mode}) => {
           },
           // @ts-ignore
           [env.VITE_BASE_IMG_URL]: {
-            target: 'https://quickhome-1315319695.cos.ap-chengdu.myqcloud.com/',
+            target: env.VITE_PROXY_IMG_URL,
+            // target: 'https://quickhome-1315319695.cos.ap-chengdu.myqcloud.com/',
             changeOrigin: true,
             rewrite: (path) => {
               return path

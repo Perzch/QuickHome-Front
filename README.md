@@ -2,10 +2,6 @@
 
 This template should help get you started developing with Vue 3 in Vite.
 
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
 ## Type Support for `.vue` Imports in TS
 
 TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
@@ -28,7 +24,13 @@ npm install
 ```
 
 ### Compile and Hot-Reload for Development
-
+```
+//.env.development
+//将路径修改为后端路径
+VITE_PROXY_URL=http://localhost:8080
+//将路径修改为对象存储路径
+VITE_PROXY_IMG_URL=http://localhost:9000
+```
 ```sh
 npm run dev
 ```
